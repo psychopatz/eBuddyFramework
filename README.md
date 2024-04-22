@@ -3,46 +3,46 @@ Git
 Python 3.11
 IDE: Vscode
 
-PS: Gibutngan nakog asterisk ang code pra copyhon siya 1 by one
+# PS: Gibutngan nakog asterisk ang code pra copyhon siya 1 by one
 
-1: Download Ollama
-#Download Model
-*ollama pull mistral
-#Download Embeddings
+## 1: Download Ollama
+### Download Model
+*ollama pull llama3
+### Download Embeddings
 *ollama pull nomic-embed-text
-#run ollama
+### run ollama
 *ollama serve
 
-2: Configure Make
-#Download Make
+## 2: Configure Make
+### Download Make
  Link: https://gnuwin32.sourceforge.net/downlinks/make.php
-#Add the installation location to Env Path:
+### Add the installation location to Env Path:
 Environmental Variables -> System Variable Path ->edit -> New
 And Paste the location in there; Default Path(C:\Program Files (x86)\GnuWin32\bin)
 
-3: Installing Poetry
+## 3: Installing Poetry
 *pip install pipx
-#after it
+### after it
 *pipx install poetry
 *pipx ensurepath
 
-4: Create new Env
+## 4: Create new Env
 * conda create -n {env Name} python=3.11
 
-5: Install PrivateGPT
-#Cd to the privategpt directory
-#Make sure to be in your conda Env 
-#Install it by running the code
+## 5: Install PrivateGPT
+### Cd to the privategpt directory
+### Make sure to be in your conda Env 
+### Install it by running the code
 *poetry install --extras "ui llms-ollama embeddings-ollama vector-stores-qdrant"
 
-6: Running the privateGPT
-# Open a new anaconda POWERSHELL console and conda activate to the env
-# also make sure youre in the right path
+## 6: Running the privateGPT
+### Open a new anaconda POWERSHELL console and conda activate to the env
+### also make sure youre in the right path
 
-if Using PowerShell:
+### if Using PowerShell:
 *$env:PGPT_PROFILES="ollama"
 *make run
 
-If Using just CMD:
+### If Using just CMD:
 *set PGPT_PROFILES=ollama
 *make run
