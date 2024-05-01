@@ -1,16 +1,18 @@
 import React from 'react';
 import { Paper, styled } from '@mui/material';
 import FormatText from './FormatText';
+import LoadingAnimations from './LoadingAnimation';
 
+// Function to calculate dynamic width based on text length
 const calculateWidth = (text) => {
     const baseSize = 8; // Minimum width as a percentage
     const maxSize = 55; // Maximum width as a percentage
-    const lengthFactor = 0.5; // Factor to adjust scaling
-    const textLength = text ? text.length : 0; // Ensure text is not undefined
-    const calculatedWidth = Math.min(Math.max(baseSize, textLength * lengthFactor), maxSize);
-    return `${calculatedWidth}%`;
+    const lengthFactor = 0.5; // Length multiplier to scale width
+    const textLength = text ? text.length : 0;
+    return `${Math.min(Math.max(baseSize, textLength * lengthFactor), maxSize)}%`;
 };
 
+// Function to determine styles based on the message role
 const getStylesByRole = (role) => {
     switch (role) {
         case 'assistant':
@@ -43,12 +45,12 @@ const getStylesByRole = (role) => {
             };
         default:
             return {
-                backgroundColor: '#f4f4f4',
-                textAlign: 'left'
+                display: 'none' // Hide system messages or any undefined role
             };
     }
 };
 
+// Styled component for the chat bubble
 const StyledPaper = styled(Paper)(({ theme, role, content }) => ({
     width: calculateWidth(content),
     marginBottom: '18px',
@@ -57,11 +59,26 @@ const StyledPaper = styled(Paper)(({ theme, role, content }) => ({
     ...getStylesByRole(role),
 }));
 
-const ChatBubble = React.memo(({ message }) => (
-    <StyledPaper role={message.role} content={message.content}>
-        <h3>{message.role.toUpperCase()}</h3>
-        <FormatText text={message.content} />
-    </StyledPaper>
-));
+// ChatBubble component displaying either loading animation or formatted text
+const ChatBubble = React.memo(({ message, isLoading = false }) => {
+    if (isLoading) {
+        return (
+            <StyledPaper role={"assistant"} content={"*The Assistant is thinking*, \nPlease Wait"}>
+                <h3>{"ASSISTANT"}</h3>
+                <FormatText text={"*The Assistant is thinking*, \nPlease Wait"} />
+                <LoadingAnimations />
+            </StyledPaper>
+        );
+    } else if (message.role !== 'system') {
+        return (
+            <StyledPaper role={message.role} content={message.content}>
+                <h3>{message.role.toUpperCase()}</h3>
+                <FormatText text={message.content} />
+            </StyledPaper>
+        );
+    }
+
+    return null; // Returns null if the role is 'system', effectively hiding it
+});
 
 export default ChatBubble;

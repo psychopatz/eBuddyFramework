@@ -39,19 +39,23 @@ const ChatModule = () => {
         if (!inputText.trim()) return;
         addMessage(inputText);
         updateApiMessages([...messages, { content: inputText, role: "user" }]);
-        console.log("data: ", data);
+        console.log("Server Data: ", data);
         setShouldFetch(true);
         setInputText('');
     };
 
     return (
         <>
-            <p>Data</p>
+            {/* <p>Data</p>
             <pre>{JSON.stringify(data, null, 2)}</pre>
             <p>Error</p>
-            <pre>{JSON.stringify(error, null, 2)}</pre>
+            <pre>{JSON.stringify(error, null, 2)}</pre> */}
             {messages.map((message, index) => (
-                <ChatBubble key={index} message={message} isLoading={isLoading} />
+                <>
+                
+                {index === messages.length - 1 && isLoading ? <><ChatBubble key={index} message={message} isLoading={false}/><ChatBubble key={index} message={message} isLoading={true}/></> : <ChatBubble key={index} message={message} isLoading={false}/>}                
+                </>
+                
             ))}
             <InputBox 
                 value={inputText}
