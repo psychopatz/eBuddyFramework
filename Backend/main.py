@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, status
 from pydantic import BaseModel
 from typing import Annotated
+from typing import List
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from pgpt_python.client import PrivateGPTApi
@@ -131,3 +132,21 @@ async def delete_docs(id: int, db:db_dependency):
              summary="Checks the health of the Privategpt backend")
 async def health():
     return {client.health.health()}
+
+
+
+
+class Message(BaseModel):
+    role: str
+    content: str
+
+class ChatRequest(BaseModel):
+    messages: List[Message]
+
+@backend.post("/chat-completion")
+def chat_completion(chat_request: ChatRequest):
+    print(chat_request)  # Debugging line to see what's being received
+    chat_result = client.contextual_completions.chat_completion(messages=chat_request.messages)
+    print(chat_result)
+    return {"messages": chat_request}
+

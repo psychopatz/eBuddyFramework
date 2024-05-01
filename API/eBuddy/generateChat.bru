@@ -1,0 +1,31 @@
+meta {
+  name: generateChat
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://127.0.0.1:8000/chat-completion
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "messages": [
+      {
+        "role": "system",
+        "content": "Answer with just the result: 2+2"
+      },
+      {
+        "role": "user",
+        "content": "What is the result of 2+2?"
+      }
+    ]
+  }
+  
+}
