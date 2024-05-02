@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { deleteIngestedDocument } from '../api/ingestApi'; // Adjust the path as needed
+import { deleteIngestedDocument } from '../api/ingestApi';
+import useListIngest from '../API/useListIngest';
 
 const RemoveIngestedDocs = () => {
   const [status, setStatus] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const { data, loading, error } = useListIngest();
 
   const handleDelete = async (docId) => {
     setIsLoading(true);
@@ -18,6 +21,9 @@ const RemoveIngestedDocs = () => {
       setIsLoading(false);
     }
   };
+
+  if (loading) return <p>Loading documents...</p>;
+  if (error) return <p>Error loading documents: {error.message}</p>;
 
   return (
     <div>
