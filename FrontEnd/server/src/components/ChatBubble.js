@@ -1,7 +1,8 @@
 import React from 'react';
 import { Paper, styled } from '@mui/material';
 import FormatText from './FormatText';
-import LoadingAnimations from './LoadingAnimation';
+import useTypingEffect from '../Tools/useTypingEffect';
+import LoadingAnimation from '../Tools/LoadingAnimation';
 
 // Function to calculate dynamic width based on text length
 const calculateWidth = (text) => {
@@ -61,19 +62,14 @@ const StyledPaper = styled(Paper)(({ theme, role, content }) => ({
 
 // ChatBubble component displaying either loading animation or formatted text
 const ChatBubble = React.memo(({ message, isLoading = false }) => {
-    if (isLoading) {
-        return (
-            <StyledPaper role={"assistant"} content={"*The Assistant is thinking*, \nPlease Wait"}>
-                <h3>{"ASSISTANT"}</h3>
-                <FormatText text={"*The Assistant is thinking*, \nPlease Wait"} />
-                <LoadingAnimations />
-            </StyledPaper>
-        );
-    } else if (message.role !== 'system') {
+  const typingText = useTypingEffect(message.content, 50); 
+    if (message.role !== 'system') {
         return (
             <StyledPaper role={message.role} content={message.content}>
-                <h3>{message.role.toUpperCase()}</h3>
-                <FormatText text={message.content} />
+                <h3>{message.role === "assistant" ? "CITChat": message.role.toUpperCase()}</h3>
+                <FormatText text={(message.role === 'assistant' && !isLoading ? typingText : message.content)
+              } />
+                {(isLoading) && <LoadingAnimation />}
             </StyledPaper>
         );
     }

@@ -1,6 +1,9 @@
 import { useHealthCheck, HealthCheck } from './API/useHealthCheck';
+import DocumentManager from './Admin/DocumentManager';
 import './App.css';
-import ChatModule from './ChatModule';
+import ChatModule from './components/ChatModule';
+import IngestDocuments from './components/IngestDocuments';
+
 
 
 function App() {
@@ -8,7 +11,9 @@ function App() {
   return (
     <div className="App">
       <ChatModule/>
-      <HealthCheck/>
+      {/* <HealthCheck/> */}
+      <IngestDocuments/>
+      <DocumentManager/>
     </div>
   );
 }

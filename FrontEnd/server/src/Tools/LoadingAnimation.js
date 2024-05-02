@@ -2,7 +2,7 @@ import React from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 
-function LoadingAnimations({ color = 'primary' }) {
+function LoadingAnimation({ color = 'primary' }) {
   return (
     <Box sx={{
       width: '100%',
@@ -15,4 +15,4 @@ function LoadingAnimations({ color = 'primary' }) {
   );
 }
 
-export default LoadingAnimations;
+export default LoadingAnimation;
