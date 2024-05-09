@@ -24,6 +24,7 @@ And Paste the location in there; Default Path(C:\Program Files (x86)\GnuWin32\bi
 *pip install pipx
 ### after it
 *pipx install poetry
+
 *pipx ensurepath
 
 ## 4: Create new Env
