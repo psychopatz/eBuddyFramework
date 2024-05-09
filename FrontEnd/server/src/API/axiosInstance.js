@@ -1,10 +1,16 @@
 import axios from 'axios';
 
-const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8001/v1',
+const axiosLLM = axios.create({
+  baseURL: `${process.env.REACT_APP_LLM_URL}/v1`,
+  headers: {
+    'Accept': 'application/json'
+  }
+});
+const axiosBackend = axios.create({
+  baseURL: `${process.env.REACT_APP_BACKEND_URL}`,
   headers: {
     'Accept': 'application/json'
   }
 });
 
-export default axiosInstance;
+export { axiosLLM, axiosBackend };

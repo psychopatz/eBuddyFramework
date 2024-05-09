@@ -1,0 +1,98 @@
+import { Box, Container, Typography } from "@mui/material";
+import InputField from "../components/InputField";
+import BtnCustom from "../components/BtnCustom";
+import { ApiAdmin } from "../API/ApiAdmin";
+
+const Register = () => {
+
+const handleSubmit = async (event) => {
+    event.preventDefault();  // Prevents the default form submission mechanism
+    const data = new FormData(event.currentTarget);
+    
+    if (data.get('password') !== data.get('Repassword')) {
+        alert("Password does not match");
+    } else {
+        const adminData = {
+            email: data.get('email'),
+            password: data.get('password'),
+            firstName: data.get('firstName'),
+            lastName: data.get('lastName')
+        };
+
+        try {
+            const response = await ApiAdmin.createAdmin(adminData); // Using await here
+            alert("Registration successful");
+            console.log('Registered admin:', response.data); // Log or handle the response as needed
+        } catch (error) {
+            console.error('Error registering admin:', error);
+            alert("Registration failed"); // Notify user of failure
+        }
+    }
+};
+
+
+    
+    
+
+    return (
+        <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          Admin Registration
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <InputField
+            label="Your First Name"
+            name="firstName"
+            type="text"
+            // autoComplete="current-password"
+            required
+          />
+          <InputField
+            label="Your Last Name"
+            name="lastName"
+            type="text"
+            // autoComplete="current-password"
+            required
+          />
+          <InputField
+            label="Email Address"
+            name="email"
+            // autoComplete="email"
+            required
+            autoFocus
+          />
+          <InputField
+            label="Password"
+            name="password"
+            type="password"
+            // autoComplete="current-password"
+            required
+          />
+          <InputField
+            label="Retype Password"
+            name="Repassword"
+            type="password"
+            // autoComplete="current-password"
+            required
+          />
+
+          
+
+          <BtnCustom type="submit" sx={{ mt: 3, mb: 2 }}>
+            Register
+          </BtnCustom>
+        </Box>
+      </Box>
+    </Container>
+      );
+}
+ 
+export default Register;

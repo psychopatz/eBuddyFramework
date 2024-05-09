@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axiosInstance from './axiosInstance';
+import {axiosLLM} from './axiosInstance';
 
 
 const useIngestDocument = () => {
@@ -21,7 +21,7 @@ const useIngestDocument = () => {
 
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post('/ingest/file', formData, config);
+      const response = await axiosLLM.post('/ingest/file', formData, config);
       setData(response.data);  // Assume the response returns the data directly
       setError(null);
     } catch (err) {

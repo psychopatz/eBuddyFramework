@@ -1,6 +1,6 @@
 // src/hooks/useListIngest.js
 import { useState, useEffect } from 'react';
-import axiosInstance from './axiosInstance.js';
+import {axiosLLM} from './axiosInstance.js';
 
 const useListIngest = () => {
   const [data, setData] = useState(null);
@@ -11,7 +11,7 @@ const useListIngest = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axiosInstance.get('/ingest/list');
+        const response = await axiosLLM.get('/ingest/list');
         setData(response.data);  // Assume the response has the data directly
         setError(null);
       } catch (err) {

@@ -1,2 +1,2 @@
-cd .\private-gpt
+cd ..\private-gpt
 poetry run python scripts/setup

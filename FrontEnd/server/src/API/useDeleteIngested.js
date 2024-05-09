@@ -1,8 +1,8 @@
-import axiosInstance from "./axiosInstance";
+import {axiosLLM} from "./axiosInstance";
 
 const useDeleteIngested = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/ingest/${id}`);
+    const response = await axiosLLM.delete(`/ingest/${id}`);
     // Check if the response includes specific success messaging or just resolve generally
     return response.data.message || 'Successfully deleted';
   } catch (error) {

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import axiosInstance from './axiosInstance';
+import {axiosLLM} from './axiosInstance';
 
 
 
@@ -24,7 +24,7 @@ const useChatCompletion = (
     };
 
     try {
-      const response = await axiosInstance.post(url, postData);
+      const response = await axiosLLM.post(url, postData);
       setData(response.data);
     } catch (error) {
       setError(error);

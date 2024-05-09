@@ -1,8 +1,8 @@
 import React from 'react';
 import { Paper, styled } from '@mui/material';
-import FormatText from './FormatText';
-import useTypingEffect from '../Tools/useTypingEffect';
-import LoadingAnimation from '../Tools/LoadingAnimation';
+import FormatText from '../FormatText';
+import useTypingEffect from '../../Tools/useTypingEffect';
+import LoadingAnimation from '../../Tools/LoadingAnimation';
 
 // Function to calculate dynamic width based on text length
 const calculateWidth = (text) => {
