@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 });
 
 export const ApiAdmin = {
-  createAdmin: (adminData) => axiosInstance.post('admins/', adminData),
+  createAdmin: (adminData) => axiosInstance.post('admins/create/', adminData),
   getAdmins: () => axiosInstance.get('admins/'),
   getAdminById: (id) => axiosInstance.get(`admins/${id}/`),
   updateAdmin: (id, adminData) => axiosInstance.put(`admins/${id}/`, adminData),

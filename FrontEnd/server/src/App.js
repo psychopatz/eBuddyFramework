@@ -6,6 +6,7 @@ import Login from './Admin/Login';
 import DocxEditor from './components/DocumentHandling/DocxEditor';
 import ChatPage from './User/ChatPage';
 import Register from './Admin/register';
+import AdminChatPage from './Admin/AdminChatPage';
 
 
 
@@ -18,8 +19,9 @@ function App() {
     <>
     <Routes>
         <Route path="/" element={<ChatPage />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/admin/login" element={<Login />} />
         <Route path='/admin/register' element={<Register />} />
+        <Route path='/admin/test-chatbot' element={<AdminChatPage />} />
         <Route path='/DocumentEditor' element={<DocxEditor/>} />
         <Route path="/document-manager" element={<DocumentManager />} />
         <Route path="/ingest-documents" element={<IngestDocuments />} />

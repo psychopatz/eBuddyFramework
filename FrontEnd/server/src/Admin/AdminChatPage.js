@@ -5,7 +5,7 @@ import HistoryDrawer from "../components/Chat/HistoryDrawer";
 
 const AdminChatPage = () => {
     return ( 
-        <ChatProvider>
+        <ChatProvider isTemporary={true}>
              <Box sx={{
             display: 'flex',
             height: '100vh',

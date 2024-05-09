@@ -66,15 +66,19 @@ class AdminId(BaseModel):
 
 @app.post("/admins/create", status_code=status.HTTP_201_CREATED)
 async def create_admin(admin: AdminBase, db:db_dependency):
+    #if email already existed
+    existing_admin = db.query(Admin).filter(Admin.email == admin.email).first()
+    if existing_admin:
+        raise HTTPException(status_code=400, detail="Email already in use")
+    #create new admin
     db_admin = Admin(**admin.dict())
     db.add(db_admin)
     db.commit()
+    if admin is None:
+        raise HTTPException(status_code=404, detail="Admin not found")
 
-@app.post("/admins/get",status_code=status.HTTP_200_OK)
+@app.get("/admins/{id}",status_code=status.HTTP_200_OK)
 async def read_admin(id: int, db:db_dependency):
-    id = id or None
-    if id is None:
-        raise HTTPException(status_code=400, detail="ID is required in the request body")
     admin = db.query(Admin).filter(Admin.id == id).first()
     if admin is None:
         raise HTTPException(status_code=404, detail="Admin not found")

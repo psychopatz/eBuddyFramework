@@ -1,17 +1,43 @@
 import { Box, Container, Typography } from "@mui/material";
 import InputField from "../components/InputField";
 import BtnCustom from "../components/BtnCustom";
+import useLocalStorage from "../API/useLocalStorage";
+import { useState } from "react";
+import { ApiAdmin } from "../API/ApiAdmin";
 
 const Login = () => {
+    const [adminCredentials,setAdminCredentials] = useLocalStorage('adminCredentials', {});
+    const [loginError, setLoginError] = useState("");
 
-    const handleSubmit = (event) => {
-    event.preventDefault();  // Prevents the default form submission mechanism
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),  // Fetching the email from the form
-      password: data.get('password'),  // Fetching the password from the form
-    });
-  };
+    const handleSubmit = async (event) => {
+        event.preventDefault();  // Prevents the default form submission mechanism
+        const data = new FormData(event.currentTarget);
+        const loginData = {
+            email: data.get('email'),
+            password: data.get('password')
+        };
+
+        try {
+            const response = await ApiAdmin.loginAdmin(loginData);
+            if (response.status === 200) {
+                // Assuming response contains admin data or token
+                // setAdminCredentials(response.data);
+                const credentials = {id:response.data.id,
+                                    email:data.get('email'),
+                                    password: data.get('password')};
+                console.log('Login successful', credentials);
+                setAdminCredentials(credentials);
+
+                // Redirect to dashboard or home page here if needed
+            } else {
+                throw new Error('Failed to log in');
+            }
+        } catch (error) {
+            // Display backend error message
+            setLoginError(error.response ? error.response.data.detail : "An unexpected error occurred");
+            console.error('Login error:', error);
+        }
+    };
 
     return (
         <Container component="main" maxWidth="xs">
@@ -23,6 +49,9 @@ const Login = () => {
           alignItems: 'center',
         }}
       >
+        {loginError && (
+                    <Typography color="error">{loginError}</Typography>  // Displaying the error from backend
+                )}
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>

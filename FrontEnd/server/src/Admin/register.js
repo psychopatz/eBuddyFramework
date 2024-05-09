@@ -5,13 +5,15 @@ import { ApiAdmin } from "../API/ApiAdmin";
 
 const Register = () => {
 
-const handleSubmit = async (event) => {
-    event.preventDefault();  // Prevents the default form submission mechanism
-    const data = new FormData(event.currentTarget);
-    
-    if (data.get('password') !== data.get('Repassword')) {
-        alert("Password does not match");
-    } else {
+ const handleSubmit = async (event) => {
+        event.preventDefault(); 
+        const data = new FormData(event.currentTarget);
+        
+        if (data.get('password') !== data.get('Repassword')) {
+            alert("Password does not match");
+            return;  // Stop further execution if passwords don't match
+        }
+
         const adminData = {
             email: data.get('email'),
             password: data.get('password'),
@@ -20,15 +22,18 @@ const handleSubmit = async (event) => {
         };
 
         try {
-            const response = await ApiAdmin.createAdmin(adminData); // Using await here
+            const response = await ApiAdmin.createAdmin(adminData);
             alert("Registration successful");
             console.log('Registered admin:', response.data); // Log or handle the response as needed
         } catch (error) {
             console.error('Error registering admin:', error);
-            alert("Registration failed"); // Notify user of failure
+            if (error.response && error.response.status === 400) {
+                alert("Registration failed: Email is already taken");
+            } else {
+                alert("Registration failed: Please try again later.");
+            }
         }
-    }
-};
+    };
 
 
     

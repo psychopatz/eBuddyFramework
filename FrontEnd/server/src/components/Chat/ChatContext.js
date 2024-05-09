@@ -9,12 +9,14 @@ export function useChat() {
     return useContext(ChatContext);
 }
 
-export const ChatProvider = ({ children }) => {
+export const ChatProvider = ({ children,isTemporary = false }) => {
     const [chatHistory, setChatHistory] = useLocalStorage('chatHistory', []);
     const [currentChatIndex, setCurrentChatIndex] = useLocalStorage('currentChatIndex', 0);
     const [messages, setMessages] = useState([]);
     const { data: systemChatData, isLoading: isLoadingSysChat, error: errorSysChat } = useFetchData('/prompts/chatPrompt');
     const { data: boilerPlateData, isLoading: isLoadingBoilerPlate, error: errorBoilerPlate } = useFetchData('/prompts/boilerPlateChat');
+
+
 
     const [defaultSystemChat, setDefaultSystemChat] = useState([{
         content: `Your name is CITChat. You can only answer questions about the provided context. If you know the answer but it is not based in the provided context, 
@@ -45,8 +47,12 @@ export const ChatProvider = ({ children }) => {
     const newChat = () => {
         if (messages.length !== 0) {
             setMessages([]);
-            setChatHistory([[], ...chatHistory]);
-            setCurrentChatIndex(0);
+            console.log("isTemporary: ",isTemporary);
+            if(!isTemporary){ 
+                setChatHistory([[], ...chatHistory]);
+                setCurrentChatIndex(0); 
+            }
+            
         }
     };
 
@@ -56,7 +62,7 @@ export const ChatProvider = ({ children }) => {
     };
 
     return (
-        <ChatContext.Provider value={{ chatHistory, setChatHistory, currentChatIndex, setCurrentChatIndex, messages, setMessages, newChat, loadHistory, boilerPlateMessages, defaultSystemChat }}>
+        <ChatContext.Provider value={{ chatHistory, setChatHistory, currentChatIndex, setCurrentChatIndex, messages, setMessages, newChat, loadHistory, boilerPlateMessages, defaultSystemChat,isTemporary }}>
             {children}
         </ChatContext.Provider>
     );

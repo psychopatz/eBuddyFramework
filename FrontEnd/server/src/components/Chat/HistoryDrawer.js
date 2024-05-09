@@ -36,7 +36,7 @@ function HistoryDrawer() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [hoveredItemIndex, setHoveredItemIndex] = useState(null);
   const [selectedItemIndex, setSelectedItemIndex] = useState(null);
-  const { setChatHistory, setCurrentChatIndex, currentChatIndex, chatHistory, newChat, loadHistory } = useChat();
+  const { setChatHistory, setCurrentChatIndex, currentChatIndex, chatHistory, newChat, loadHistory,isTemporary } = useChat();
 
   const handleClick = (event, index) => {
     event.preventDefault();
