@@ -12,7 +12,8 @@ const DocumentManager = () => {
     <div>
       <h1>Managed Documents</h1>
       {data && data.data ? (
-        <DocumentList documents={data.data} />
+        <h1>Document List</h1>
+        // <DocumentList documents={data.data} />
       ) : (
         <p>No documents to display.</p>
       )}

@@ -2,12 +2,26 @@ import { Box, Container, Typography } from "@mui/material";
 import InputField from "../components/InputField";
 import BtnCustom from "../components/BtnCustom";
 import useLocalStorage from "../API/useLocalStorage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiAdmin } from "../API/ApiAdmin";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-    const [adminCredentials,setAdminCredentials] = useLocalStorage('adminCredentials', {});
     const [loginError, setLoginError] = useState("");
+   
+    const navigate = useNavigate();
+    const [adminCredentials,setAdminCredentials] = useLocalStorage('adminCredentials', {});
+    useEffect(() => {
+        const isAuthenticated = adminCredentials && Object.keys(adminCredentials).length > 0;
+        if(isAuthenticated){
+            // Redirect to dashboard or home page here if needed
+            navigate('/admin');
+        }
+       
+    }, []);
+
+
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();  // Prevents the default form submission mechanism
@@ -18,7 +32,7 @@ const Login = () => {
         };
 
         try {
-            const response = await ApiAdmin.loginAdmin(loginData);
+            const response = await ApiAdmin.login(loginData);
             if (response.status === 200) {
                 // Assuming response contains admin data or token
                 // setAdminCredentials(response.data);
@@ -27,6 +41,7 @@ const Login = () => {
                                     password: data.get('password')};
                 console.log('Login successful', credentials);
                 setAdminCredentials(credentials);
+                navigate('/admin');
 
                 // Redirect to dashboard or home page here if needed
             } else {

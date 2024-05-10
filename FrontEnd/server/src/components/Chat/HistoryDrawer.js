@@ -16,8 +16,8 @@ const StyledBox = styled(Box)(({ theme, hovered, currentIndex, itemIndex }) => (
   display: 'flex',
   alignItems: 'center',
   width: '100%', // Ensure full width
-  color:  hovered ? "black" : itemIndex === currentIndex ? "white" : 'inherit',
-  backgroundColor: hovered ? theme.palette.primary.main : itemIndex === currentIndex ? theme.palette.primary.main : 'inherit',
+  color:  hovered ? "darkblue" : itemIndex === currentIndex ? "white" : 'inherit',
+  backgroundColor: hovered ? "lightblue" : itemIndex === currentIndex ? "transparent" : 'inherit',
   overflow: 'hidden', // Hide overflow
 }));
 
@@ -72,6 +72,7 @@ function HistoryDrawer() {
         '& .MuiDrawer-paper': {
           width: '240px', // Adjusted width for consistency
           boxSizing: 'border-box',
+          backgroundColor: '#14a4ff ',  // Adjusted Whole background color
         },
       }}
     >
@@ -92,10 +93,11 @@ function HistoryDrawer() {
           >
             <StyledBox hovered={hoveredItemIndex === index} currentIndex={currentChatIndex} itemIndex={index}>
               <ListItemText primary={item && item.length > 0 ? item[0].content : 'New Chat History'} noWrap sx={{
-                maxWidth: 'calc(100% - 40px)', // Leave space for the IconButton
+                maxWidth: "100%",//'calc(100% - 40px)', // Leave space for the IconButton
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
-                textOverflow: 'ellipsis'
+                textOverflow: 'ellipsis',
+
               }} />
             </StyledBox>
             <IconButton

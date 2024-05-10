@@ -177,7 +177,7 @@ async def read_dataset(id: int, db:db_dependency):
     return dataset
 
 @app.put("/datasets/{id}", status_code=status.HTTP_200_OK)
-async def update_admin(id: int, dataset_data: DatasetUpdate, db: Session = Depends(get_db)):
+async def update_dataset(id: int, dataset_data: DatasetUpdate, db: Session = Depends(get_db)):
     db_dataset = db.query(Dataset).filter(Dataset.id == id).first()
     if db_dataset is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found")
@@ -350,7 +350,7 @@ class IngestText(BaseModel):
 
 
 @app.post("/llm/ingest/text", status_code=status.HTTP_201_CREATED)
-async def ingest_text(data: IngestText):
+async def manual_ingest_text(data: IngestText):
     ingested_text_doc_id = (
         client.ingestion.ingest_text(file_name=data.name, text=data.text)
         .data[0]
@@ -358,8 +358,16 @@ async def ingest_text(data: IngestText):
     )
     return {"ingestedId": ingested_text_doc_id}
 
+class IngestDataset(BaseModel):
+    name: str
+    Question: str
+    Answer: str
+    Context: str
+
 def ingest_text_in_background(dataset_name, text, db_dataset, db):
-    ingested_text_doc_id = client.ingestion.ingest_text(file_name=dataset_name, text=text).data[0].doc_id
+    now = datetime.now()
+    currentDate = now.strftime('%d-%m-%Y %H-%M-%S')
+    ingested_text_doc_id = client.ingestion.ingest_text(file_name=f"{dataset_name} _DateCreated_ {currentDate}", text=text).data[0].doc_id
     db_dataset.IngestId = ingested_text_doc_id
     db_dataset.IsIngested = True
     db.add(db_dataset)
@@ -367,13 +375,66 @@ def ingest_text_in_background(dataset_name, text, db_dataset, db):
     db.refresh(db_dataset)
     
 @app.post("/llm/ingest", response_model=str, status_code=status.HTTP_201_CREATED)
-async def ingest_dataset(dataset: DatasetCreate, db: db_dependency, background_tasks: BackgroundTasks):
+async def ingest_dataset(dataset: IngestDataset, db: db_dependency, background_tasks: BackgroundTasks):
     db_dataset = Dataset(**dataset.dict())
-    ingestedText = f"{db_dataset.Question.replace('\n\n', ' ')}\n{db_dataset.Answer.replace('\n\n', ' ')}\n{db_dataset.Context.replace('\n\n', ' ')}"
+    ingestedText = f"{db_dataset.Question.replace('\n\n', ' ')} \n {db_dataset.Answer.replace('\n\n', ' ')} \n {db_dataset.Context.replace('\n\n', ' ')}"
     
     # Adding the ingestion to background tasks
     background_tasks.add_task(ingest_text_in_background, db_dataset.name, ingestedText, db_dataset, db)
 
     return "Queued for ingestion"
 
+def delete_ingest_text_in_background(ingestedId):
+    client.ingestion.delete_ingested(ingestedId)
 
+    
+@app.delete("/llm/ingest/{id}",status_code=status.HTTP_200_OK)
+async def delete_ingest_dataset(id: int, db:db_dependency):
+    db_dataset = db.query(Dataset).filter(Dataset.id == id).first()
+    if db_dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    if db_dataset.IsIngested:
+        background_tasks = BackgroundTasks()
+        background_tasks.add_task(delete_ingest_text_in_background, db_dataset.IngestId)
+    db.delete(db_dataset)
+    db.commit()
+    
+def update_ingest_text_in_background(dataset_name, text, db_dataset, db):
+    now = datetime.now()
+    currentDate = now.strftime('%d-%m-%Y %H-%M-%S')
+    
+    # First, delete the previously ingested text if it exists
+    if db_dataset.IngestId:
+        client.ingestion.delete_ingested(db_dataset.IngestId)
+    
+    # Ingest the new text
+    ingested_text_doc_id = client.ingestion.ingest_text(
+        file_name=f"{dataset_name} _DateCreated_ {currentDate}", text=text
+    ).data[0].doc_id
+    
+    # Update the dataset record with the new ingestion details
+    db_dataset.IngestId = ingested_text_doc_id
+    db_dataset.IsIngested = True
+    
+    db.add(db_dataset)
+    db.commit()
+    db.refresh(db_dataset)
+
+    
+@app.put("/llm/ingest/{id}", status_code=status.HTTP_200_OK)
+async def update_ingest_dataset(id: int, dataset_data: DatasetUpdate,background_tasks: BackgroundTasks, db: Session = Depends(get_db) ):
+    db_dataset = db.query(Dataset).filter(Dataset.id == id).first()
+    if db_dataset is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found")
+    
+    # Update dataset fields
+    for field, value in dataset_data.dict(exclude_unset=True).items():
+        setattr(db_dataset, field, value)
+
+    # Prepare text for ingestion
+    ingestedText = f"{db_dataset.Question.replace('\n\n', ' ')} \n {db_dataset.Answer.replace('\n\n', ' ')} \n {db_dataset.Context.replace('\n\n', ' ')}"
+    
+    # Update ingestion in background
+    background_tasks.add_task(update_ingest_text_in_background, db_dataset.name, ingestedText, db_dataset, db)
+    
+    return {"message": "Dataset updated successfully"}

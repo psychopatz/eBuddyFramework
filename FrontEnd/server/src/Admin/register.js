@@ -2,8 +2,21 @@ import { Box, Container, Typography } from "@mui/material";
 import InputField from "../components/InputField";
 import BtnCustom from "../components/BtnCustom";
 import { ApiAdmin } from "../API/ApiAdmin";
+import { useNavigate } from "react-router-dom";
+import useLocalStorage from "../API/useLocalStorage";
+import { useEffect } from "react";
 
 const Register = () => {
+  const navigate = useNavigate();
+    const [adminCredentials,setAdminCredentials] = useLocalStorage('adminCredentials', {});
+    useEffect(() => {
+        const isAuthenticated = adminCredentials && Object.keys(adminCredentials).length > 0;
+        if(isAuthenticated){
+            // Redirect to dashboard or home page here if needed
+            navigate('/admin');
+        }
+       
+    }, []);
 
  const handleSubmit = async (event) => {
         event.preventDefault(); 
@@ -22,9 +35,11 @@ const Register = () => {
         };
 
         try {
-            const response = await ApiAdmin.createAdmin(adminData);
+            const response = await ApiAdmin.create(adminData);
             alert("Registration successful");
             console.log('Registered admin:', response.data); // Log or handle the response as needed
+            setAdminCredentials(adminData);
+            navigate('/admin');
         } catch (error) {
             console.error('Error registering admin:', error);
             if (error.response && error.response.status === 400) {
