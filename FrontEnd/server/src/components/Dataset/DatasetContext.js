@@ -1,10 +1,14 @@
 import React, { useState, useEffect, createContext } from 'react';
 import { ApiDataset } from '../../API/ApiDataset'; // Adjust the path as necessary
+import { ApiIngest } from '../../API/ApiIngest';
 
 export const DatasetContext = createContext(); // Export context if needed elsewhere
 
 export const DatasetProvider = ({ children }) => {
   const [items, setItems] = useState([]);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentId, setCurrentId] = useState(null);
   const [formData, setFormData] = useState({
     id: 0,
     name: '',
@@ -26,27 +30,72 @@ export const DatasetProvider = ({ children }) => {
           ingestId: item.IngestId
         }));
         setItems(mappedItems);
+        console.log('Datasets fetched:', response.data);
       })
       .catch(error => {
         console.error('Failed to fetch datasets:', error);
-      });
+      })
+      ;
   }, []);
-
-  const handleListItemClick = (id) => {
+   const handleListItemClick = (id) => {
     const selectedItem = items.find(item => item.id === id);
     if (selectedItem) {
       setFormData(selectedItem);
     }
   };
 
+  const handleCreate = () => {
+    setIsCreating(true);
+    ApiIngest.create(formData)
+      .then(response => {
+        setItems([...items, response.data]);
+        setIsCreating(false);
+        setFormData({ id: 0, name: '', question: '', answer: '', context: '',  }); // Reset form data
+      })
+      .catch(error => {
+        console.error('Failed to create dataset:', error);
+        setIsCreating(false);
+      });
+  };
+
+  const handleUpdate = (id) => {
+    setIsEditing(true);
+    ApiIngest.update(id, formData)
+      .then(() => {
+        setIsEditing(false);
+        setFormData({ id: 0, name: '', question: '', answer: '', context: '', ingestId: '' }); // Reset form data
+      })
+      .catch(error => {
+        console.error('Failed to update dataset:', error);
+        setIsEditing(false);
+      });
+  };
+
+  const handleDelete = (id) => {
+    ApiIngest.delete(id)
+      .then(() => {
+        setItems(items.filter(item => item.id !== id));
+      })
+      .catch(error => {
+        console.error('Failed to delete the dataset:', error);
+      });
+  };
+
   const value = {
     items,
     formData,
     setItems,
+    currentId,
+    setCurrentId,
     setFormData,
     handleListItemClick,
-    handleEdit: () => {},
-    handleDelete: () => {}
+    handleCreate,
+    handleUpdate,
+    handleDelete,
+    isEditing,
+    setIsEditing,
+    isCreating,
+    setIsCreating
   };
 
   return <DatasetContext.Provider value={value}>{children}</DatasetContext.Provider>;

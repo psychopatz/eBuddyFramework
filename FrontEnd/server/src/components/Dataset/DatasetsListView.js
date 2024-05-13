@@ -22,17 +22,18 @@ const ListItem = styled(MuiListItem)(({ theme, selected }) => ({
 }));
 
 function DatasetsListView({ listHeight }) {
-  const { items, handleListItemClick, handleEdit, handleDelete } = useContext(DatasetContext);
+  const { items, handleListItemClick, handleEdit, handleDelete, currentId, setCurrentId } = useContext(DatasetContext);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);  // To control the menu's position
-  const [currentId, setCurrentId] = useState(null);  // To track the current item ID for menu operations
+    // To track the current item ID for menu operations
 
   const handleMenuClick = (event, id) => {
-    console.log("Opening menu for item:", id);  // Log when the menu is opened
+    console.log("Opening menu for item:", id);
+    event.stopPropagation();  // This should come before any other action
     setAnchorEl(event.currentTarget);
-    setCurrentId(id);  // Store the ID of the item for which the menu was opened
-    event.stopPropagation();  // Prevent triggering the onItemClick
-  };
+    setCurrentId(id);
+};
+
 
   const handleClose = () => {
     console.log("Closing menu");  // Log when the menu is closed
@@ -44,6 +45,7 @@ function DatasetsListView({ listHeight }) {
     setSelectedItemId(id);
     handleListItemClick(id);
   };
+
 
   return (
     <ScrollableContainer height={listHeight}>
@@ -77,8 +79,16 @@ function DatasetsListView({ listHeight }) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => { console.log("Edit action for:", currentId); handleEdit(currentId); handleClose(); }}>Edit</MenuItem>
-        <MenuItem onClick={() => { console.log("Delete action for:", currentId); handleDelete(currentId); handleClose(); }}>Delete</MenuItem>
+        <MenuItem onClick={() => { 
+          console.log("Edit action for:", selectedItemId);
+          handleEdit(selectedItemId); 
+          handleClose(); 
+          }}>Edit</MenuItem>
+        <MenuItem onClick={() => {
+              console.log("Delete action for:", currentId);
+              handleDelete(currentId);
+              handleClose();
+          }}>Delete</MenuItem>
       </Menu>
     </ScrollableContainer>
   );

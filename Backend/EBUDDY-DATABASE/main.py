@@ -349,14 +349,14 @@ class IngestText(BaseModel):
     text: str
 
 
-@app.post("/llm/ingest/text", status_code=status.HTTP_201_CREATED)
-async def manual_ingest_text(data: IngestText):
-    ingested_text_doc_id = (
-        client.ingestion.ingest_text(file_name=data.name, text=data.text)
-        .data[0]
-        .doc_id
-    )
-    return {"ingestedId": ingested_text_doc_id}
+# @app.post("/llm/ingest/text", status_code=status.HTTP_201_CREATED)
+# async def manual_ingest_text(data: IngestText):
+#     ingested_text_doc_id = (
+#         client.ingestion.ingest_text(file_name=data.name, text=data.text)
+#         .data[0]
+#         .doc_id
+#     )
+#     return {"ingestedId": ingested_text_doc_id}
 
 class IngestDataset(BaseModel):
     name: str
@@ -368,6 +368,7 @@ def ingest_text_in_background(dataset_name, text, db_dataset, db):
     now = datetime.now()
     currentDate = now.strftime('%d-%m-%Y %H-%M-%S')
     ingested_text_doc_id = client.ingestion.ingest_text(file_name=f"{dataset_name} _DateCreated_ {currentDate}", text=text).data[0].doc_id
+    print(f"Ingested Hash: {ingested_text_doc_id}")
     db_dataset.IngestId = ingested_text_doc_id
     db_dataset.IsIngested = True
     db.add(db_dataset)
@@ -384,8 +385,8 @@ async def ingest_dataset(dataset: IngestDataset, db: db_dependency, background_t
 
     return "Queued for ingestion"
 
-def delete_ingest_text_in_background(ingestedId):
-    client.ingestion.delete_ingested(ingestedId)
+# def delete_ingest_text_in_background(ingestedId):
+#     client.ingestion.delete_ingested(ingestedId)
 
     
 @app.delete("/llm/ingest/{id}",status_code=status.HTTP_200_OK)
@@ -393,9 +394,11 @@ async def delete_ingest_dataset(id: int, db:db_dependency):
     db_dataset = db.query(Dataset).filter(Dataset.id == id).first()
     if db_dataset is None:
         raise HTTPException(status_code=404, detail="Dataset not found")
-    if db_dataset.IsIngested:
-        background_tasks = BackgroundTasks()
-        background_tasks.add_task(delete_ingest_text_in_background, db_dataset.IngestId)
+    
+    # background_tasks = BackgroundTasks()
+    # background_tasks.add_task(delete_ingest_text_in_background, db_dataset.IngestId)
+    print(f"Deleting ingestion: {db_dataset.IngestId}")
+    print("Deletion Error: ",client.ingestion.delete_ingested(db_dataset.IngestId))
     db.delete(db_dataset)
     db.commit()
     

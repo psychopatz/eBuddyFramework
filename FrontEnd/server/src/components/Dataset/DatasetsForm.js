@@ -44,6 +44,10 @@ const ButtonContainer = styled(Box)({
 });
 
 const btnStyles = {
+  create: {
+    bgcolor: 'green',
+    ':hover': { bgcolor: 'darkgreen' }
+  },
   submit: {
     bgcolor: 'primary.main',
     ':hover': { bgcolor: 'primary.dark' }
@@ -59,8 +63,8 @@ const btnStyles = {
 };
 
 const DatasetsForm = () => {
-  const { formData, setFormData } = useContext(DatasetContext);
-  const [isEditing, setIsEditing] = useState(false);
+  const { formData, setFormData, isEditing, setIsEditing,isCreating,handleDelete, handleCreate, handleUpdate } = useContext(DatasetContext);
+  
 
 
   const handleChange = (event) => {
@@ -72,14 +76,21 @@ const DatasetsForm = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log('Form Data:', formData);
+     if (isCreating) {
+        console.log('Create action initiated');
+        // handleCreate(); // Call create specific logic
+    } else if (isEditing) {
+        console.log('Update action initiated');
+        handleUpdate(formData.id);
+        // handleUpdateSubmit(); // Call update specific logic
+  }
+  console.log('Form Data:', formData);
     setIsEditing(false);
   };
 
-  const handleDelete = () => {
-    console.log('Delete action initiated');
-  };
 
-  const handleUpdate = () => {
+
+  const handleEditMode = () => {
     console.log('Update action initiated');
     setIsEditing(true);
   };
@@ -96,7 +107,7 @@ const DatasetsForm = () => {
         label="Name"
         name="name"
         required
-        disabled={!isEditing}
+        disabled={!isEditing && !isCreating}
         variant="outlined"
         value={formData.name}
         onChange={handleChange}
@@ -107,7 +118,7 @@ const DatasetsForm = () => {
         name="question"
         multiline
         required
-        disabled={!isEditing}
+        disabled={!isEditing && !isCreating}
         variant="outlined"
         value={formData.question}
         onChange={handleChange}
@@ -124,7 +135,7 @@ const DatasetsForm = () => {
         name="answer"
         multiline
         required
-        disabled={!isEditing}
+        disabled={!isEditing && !isCreating}
         variant="outlined"
         value={formData.answer}
         onChange={handleChange}
@@ -142,7 +153,7 @@ const DatasetsForm = () => {
         multiline
         required
 
-        disabled={!isEditing}
+        disabled={!isEditing && !isCreating}
         variant="outlined"
         value={formData.context}
         onChange={handleChange}
@@ -155,11 +166,15 @@ const DatasetsForm = () => {
       />
 
       <ButtonContainer>
-        {!isEditing && <BtnCustom onClick={handleUpdate} sx={btnStyles.update}>Update</BtnCustom>}
-        {isEditing && <BtnCustom type="submit" sx={btnStyles.submit}>Submit</BtnCustom>}
-        {!isEditing && <BtnCustom onClick={handleDelete} sx={btnStyles.delete}>Delete</BtnCustom>}
+        {formData.name && !isCreating && !isEditing && <BtnCustom onClick={() => handleEditMode()} sx={btnStyles.update}>Edit</BtnCustom>}
+        {(isCreating || isEditing) && (
+        <BtnCustom type="submit" sx={isCreating ? btnStyles.create : btnStyles.submit}>
+          {isCreating ? "Create" : "Submit Update"}
+        </BtnCustom>
+      )}
+        {formData.name && !isCreating && !isEditing && <BtnCustom onClick={() => handleDelete(formData.id)} sx={btnStyles.delete}>Delete</BtnCustom>}
       </ButtonContainer>
-      <Typography variant="subtitle">IngestID: #12345</Typography>
+      {formData.ingestId && <Typography variant="subtitle"><b>IngestID</b>: {formData.ingestId}</Typography>}
     </StyledForm>
   );
 }

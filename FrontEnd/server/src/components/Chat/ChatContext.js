@@ -19,7 +19,7 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
 
 
     const [defaultSystemChat, setDefaultSystemChat] = useState([{
-        content: `Your name is CITChat. You can only answer questions about the provided context. If you know the answer but it is not based in the provided context, 
+        content: `The Current Date is ${getCurrentDate()}, Your name is CITChat. You can only answer questions about the provided context. If you know the answer but it is not based in the provided context, 
         don't provide the answer and say you're sorry you don't know yet. Don't say "The context provided" say "My current knowledge" just state the answer is not in the context provided. Always add an emoji to the end of your answer based on how you feel and greet the user.`,
         role: 'system'
     }]);
@@ -31,7 +31,7 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
 
     useEffect(() => {
         if (!isLoadingSysChat && systemChatData && !errorSysChat) {
-            const newContent = `Current Date: ${getCurrentDate()}, ${systemChatData.content}`;
+            const newContent = `The Current Date is ${getCurrentDate()}, ${systemChatData.content}`;
             setDefaultSystemChat([{ content: newContent, role: 'system' }]);
         }
     }, [systemChatData, isLoadingSysChat, errorSysChat]);
