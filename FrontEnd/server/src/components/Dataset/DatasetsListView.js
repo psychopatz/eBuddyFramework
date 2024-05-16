@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import {
-  List, ListItem as MuiListItem, ListItemAvatar, Avatar, ListItemText,
+  List, ListItem as MuiListItem, ListItemAvatar, Avatar as MuiAvatar, ListItemText,
   IconButton, Menu, MenuItem
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -11,7 +11,7 @@ const ScrollableContainer = styled.div(props => ({
   maxHeight: props.height ? `${props.height}px` : '100%',
   overflow: 'auto',
   width: '100%',
-  backgroundColor: 'red',
+  backgroundColor: 'skyblue',
 }));
 
 const ListItem = styled(MuiListItem)(({ theme, selected }) => ({
@@ -21,32 +21,47 @@ const ListItem = styled(MuiListItem)(({ theme, selected }) => ({
   backgroundColor: selected ? '#ddd' : 'transparent',
 }));
 
+const StyledAvatar = styled(MuiAvatar)(({ isFound }) => ({
+  backgroundColor: isFound ? 'green' : 'red', // Green if active, otherwise red
+  color: 'white',
+}));
+
+
 function DatasetsListView({ listHeight }) {
-  const { items, handleListItemClick, handleEdit, handleDelete, currentId, setCurrentId } = useContext(DatasetContext);
+  const { items, handleListItemClick, handleEdit, handleDelete, currentId, setCurrentId,ingestsDocs } = useContext(DatasetContext);
   const [selectedItemId, setSelectedItemId] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);  // To control the menu's position
-    // To track the current item ID for menu operations
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenuClick = (event, id) => {
     console.log("Opening menu for item:", id);
-    event.stopPropagation();  // This should come before any other action
+    event.stopPropagation();
     setAnchorEl(event.currentTarget);
     setCurrentId(id);
-};
-
+  };
 
   const handleClose = () => {
-    console.log("Closing menu");  // Log when the menu is closed
+    console.log("Closing menu");
     setAnchorEl(null);
   };
 
   const handleClick = (id) => {
-    console.log("Item clicked:", id);  // Log when an item is clicked
+    console.log("Item clicked:", id);
     setSelectedItemId(id);
     handleListItemClick(id);
   };
 
+ const checkIngestIdExists = (ingestId) => {
+    console.log("checkIngestIdExists:", ingestId);
+    console.log("ingestsDocs:", ingestsDocs);
 
+    // Check if 'documents' is available and is an array
+    if (ingestsDocs && Array.isArray(ingestsDocs.documents)) {
+      const ingestIds = new Set(ingestsDocs.documents.map(ingest => ingest.doc_id));
+      return ingestIds.has(ingestId);
+    }
+
+    return false; // Return false if 'documents' is not available
+};
   return (
     <ScrollableContainer height={listHeight}>
       <List>
@@ -66,7 +81,7 @@ function DatasetsListView({ listHeight }) {
             }
           >
             <ListItemAvatar>
-              <Avatar>{item.name.charAt(0)}</Avatar>
+              <StyledAvatar isFound={checkIngestIdExists(item.ingestId)} >{item.name.charAt(0)}</StyledAvatar>
             </ListItemAvatar>
             <ListItemText primary={item.name} secondary={item.question} />
           </ListItem>
@@ -79,16 +94,15 @@ function DatasetsListView({ listHeight }) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => { 
+        {/* <MenuItem onClick={() => { 
           console.log("Edit action for:", selectedItemId);
-          handleEdit(selectedItemId); 
           handleClose(); 
-          }}>Edit</MenuItem>
+          }}>Edit</MenuItem> */}
         <MenuItem onClick={() => {
-              console.log("Delete action for:", currentId);
-              handleDelete(currentId);
-              handleClose();
-          }}>Delete</MenuItem>
+          console.log("Delete action for:", currentId);
+          handleDelete(currentId);
+          handleClose();
+        }}>Delete</MenuItem>
       </Menu>
     </ScrollableContainer>
   );

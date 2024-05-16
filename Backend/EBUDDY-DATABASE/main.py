@@ -7,12 +7,13 @@ from typing import List, Optional, Annotated, Any
 from database import engine, SessionLocal
 from datetime import datetime
 from sqlalchemy.orm import Session
+from sqlalchemy import inspect
 from pgpt_python.client import PrivateGPTApi
 import models
 from models import Admin, Dataset, Question, Prompt, Photo
 
-BackendCurrentURL = "http://192.168.97.155:8000"
-privateGPTBackendURL = "http://192.168.97.155:8001"
+BackendCurrentURL = "http://192.168.1.2:8000" #"http://192.168.97.155:8000"
+privateGPTBackendURL = "http://192.168.1.2:8001" #"http://192.168.97.155:8001"
 
 
 
@@ -401,8 +402,29 @@ async def ingest_dataset(dataset: IngestDataset, db: db_dependency, background_t
 
     return "Queued for ingestion"
 
-# def delete_ingest_text_in_background(ingestedId):
-#     client.ingestion.delete_ingested(ingestedId)
+
+class IngestedDocument(BaseModel):
+    doc_id: str
+    file_name: str
+
+class IngestedListResponse(BaseModel):
+    documents: List[IngestedDocument]
+    
+@app.get("/llm/ingest/list", response_model=IngestedListResponse)
+async def list_ingested():
+    try:
+        documents = []
+        for doc in client.ingestion.list_ingested().data:
+            documents.append({
+                    'file_name': doc.doc_metadata['file_name'],
+                    'doc_id': doc.doc_id
+})
+        # Return the response using the simplified model
+        return IngestedListResponse(documents=documents)
+    except Exception as e:
+        # Handle errors appropriately
+        raise HTTPException(status_code=500, detail=str(e))
+
 
     
 @app.delete("/llm/ingest/{id}",status_code=status.HTTP_200_OK)
@@ -422,27 +444,37 @@ def update_ingest_text_in_background(dataset_name, text, db_dataset, db):
     now = datetime.now()
     currentDate = now.strftime('%d-%m-%Y %H-%M-%S')
     previous_ingest_id = db_dataset.IngestId
-    
-    
-    # Ingest the new text
-    ingested_text_doc_id = client.ingestion.ingest_text(
-        file_name=f"{dataset_name} _DateCreated_ {currentDate}", text=text
-    ).data[0].doc_id
-    
-    # Update the dataset record with the new ingestion details
-    db_dataset.IngestId = ingested_text_doc_id
-    db_dataset.IsIngested = True
-    
-    db.add(db_dataset)
-    db.commit()
-    print("Deleted previous ingestion: ",client.ingestion.delete_ingested(previous_ingest_id))
-    db.refresh(db_dataset)
+
+    try:
+        # Deleting the previous ingestion
+        deletion_response = client.ingestion.delete_ingested(previous_ingest_id)
+        print(f"Deletion status for ingestion ID {previous_ingest_id}: {deletion_response}")
+
+        # Ingest the new text
+        ingestion_response = client.ingestion.ingest_text(
+            file_name=f"{dataset_name} _DateCreated_ {currentDate}", text=text
+        )
+        ingested_text_doc_id = ingestion_response.data[0].doc_id
+
+        # Update the dataset record with the new ingestion details
+        db_dataset.IngestId = ingested_text_doc_id
+        db.merge(db_dataset)
+        db.commit()
+        db.refresh(db_dataset)
+        state = inspect(db_dataset)
+        print("Instance state before commit:", state.persistent, state.detached, state.transient, state.deleted)
+        
+        print(f"Successfully updated ingestion for dataset {dataset_name} with new ID {ingested_text_doc_id}")
+    except Exception as e:
+        # Log specific exceptions or handle them differently as needed
+        print(f"Error during ingestion update for {dataset_name}: {e}")
 
     
 @app.put("/llm/ingest/{id}", status_code=status.HTTP_200_OK)
 async def update_ingest_dataset(id: int, dataset_data: DatasetUpdate,background_tasks: BackgroundTasks, db: Session = Depends(get_db) ):
     db_dataset = db.query(Dataset).filter(Dataset.id == id).first()
     if db_dataset is None:
+        print("Error Updating, Dataset not found")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found")
     
     # Update dataset fields
@@ -453,9 +485,12 @@ async def update_ingest_dataset(id: int, dataset_data: DatasetUpdate,background_
     ingestedText = f"{db_dataset.Question.replace('\n\n', ' ')} \n {db_dataset.Answer.replace('\n\n', ' ')} \n {db_dataset.Context.replace('\n\n', ' ')}"
     
     # Update ingestion in background
+    print("Sent to the ingestion queue")
     background_tasks.add_task(update_ingest_text_in_background, db_dataset.name, ingestedText, db_dataset, db)
     
     return {"message": "Dataset updated successfully"}
+
+
 
 #Save photo
 

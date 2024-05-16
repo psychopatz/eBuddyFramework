@@ -6,6 +6,7 @@ export const DatasetContext = createContext(); // Export context if needed elsew
 
 export const DatasetProvider = ({ children }) => {
   const [items, setItems] = useState([]);
+  const [ingestsDocs, setIngestsDocs] = useState([]);
   const [isCreating, setIsCreating] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
@@ -19,6 +20,8 @@ export const DatasetProvider = ({ children }) => {
   });
 
   useEffect(() => {
+
+    //Get all datasets
     ApiDataset.get()
       .then(response => {
         const mappedItems = response.data.map(item => ({
@@ -34,11 +37,23 @@ export const DatasetProvider = ({ children }) => {
       })
       .catch(error => {
         console.error('Failed to fetch datasets:', error);
+      });
+
+      //Get all ingests List
+      ApiIngest.list()
+      .then(response => {
+        setIngestsDocs(response.data); // Assuming the response data is the array of ingests
+        console.log("Ingests fetched:", response.data);
       })
-      ;
+      .catch(err => {
+        console.error("Failed to fetch ingests", err);
+      });
+
+      
   }, []);
    const handleListItemClick = (id) => {
     const selectedItem = items.find(item => item.id === id);
+    setIsCreating(false);
     if (selectedItem) {
       setFormData(selectedItem);
     }
@@ -105,7 +120,8 @@ export const DatasetProvider = ({ children }) => {
     isEditing,
     setIsEditing,
     isCreating,
-    setIsCreating
+    setIsCreating,
+    ingestsDocs
   };
 
   return <DatasetContext.Provider value={value}>{children}</DatasetContext.Provider>;
