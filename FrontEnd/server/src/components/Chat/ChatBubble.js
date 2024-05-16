@@ -73,12 +73,12 @@ const findImageUrls = (text) => {
         // Replace the localhost base URL with the environment variable, if applicable
         const updatedUrl = url.replace("http://localhost:8000", process.env.REACT_APP_BACKEND_URL);
         urls.push(updatedUrl);
-        console.log("Image URL found:", updatedUrl);
+        // console.log("Image URL found:", updatedUrl);
     }
     if (urls.length > 0) {
         return urls;
     }
-    console.log("No image URLs found.");
+    // console.log("No image URLs found.");
     return [];
 };
 
@@ -89,7 +89,7 @@ const ChatBubble = React.memo(({ message, isLoading = false,typingSpeed = 20 }) 
     const modifiedContent = message.content.replace(/http:\/\/localhost:8000/g, process.env.REACT_APP_BACKEND_URL);
     const typingText = useTypingEffect(modifiedContent, typingSpeed);
     const imageUrls = findImageUrls(modifiedContent);
-    console.log("imageUrl: ", imageUrls);
+    // console.log("imageUrl: ", imageUrls);
 
     const handleImageClick = (url) => {
         setModalImage(url);
