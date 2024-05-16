@@ -24,6 +24,7 @@ And Paste the location in there; Default Path(C:\Program Files (x86)\GnuWin32\bi
 *pip install pipx
 ### after it
 *pipx install poetry
+
 *pipx ensurepath
 
 ## 4: Create new Env
@@ -35,7 +36,9 @@ And Paste the location in there; Default Path(C:\Program Files (x86)\GnuWin32\bi
 ### Install it by running the code
 *poetry install --extras "ui llms-ollama embeddings-ollama vector-stores-qdrant"
 
-## 6: Running the privateGPT
+## 6: Copy the settings-ollama.yaml in init/Settings Temp Folder to privategpt folder and ovewrite it
+
+## 7: Running the privateGPT
 ### Open a new anaconda POWERSHELL console and conda activate to the env
 ### also make sure youre in the right path
 
