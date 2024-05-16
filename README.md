@@ -1,7 +1,10 @@
+# View This tutorial for backend https://www.youtube.com/watch?v=Ww2oelybDz8
+
 Prereq:
 Git
 Python 3.11
 IDE: Vscode
+Mysql
 
 # PS: Gibutngan nakog asterisk ang code pra copyhon siya 1 by one
 
