@@ -1,46 +1,41 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
-import DocumentManager from './Admin/DocumentManager';
-import './App.css';
-import IngestDocuments from './components/IngestDocuments';
 import Login from './Admin/Login';
-import DocxEditor from './components/DocumentHandling/DocxEditor';
-import ChatPage from './User/ChatPage';
-import Register from './Admin/Register';
-import AdminChatPage from './Admin/AdminChatPage';
-import Dashboard from './Admin/Dashboard';
-import NotFound from './NotFound';
 import Logout from './Admin/Logout';
+import Register from './Admin/Register';
+import Dashboard from './Admin/Dashboard';
+import ViewQuestionsPage from './Admin/ViewQuestionsPage';
 import ManageDatasetsPage from './Admin/ManageDatasetsPage';
+import AdminChatPage from './Admin/AdminChatPage';
+import ChatPage from './User/ChatPage';
+import NotFound from './NotFound';
+import NavBar from './components/Navbar/Navbar';
 
-
-
-
-
+// Navigation component that includes NavBar based on current path
+function Navigation() {
+  const location = useLocation();
+  const showNavBar = ['/admin/','/admin', '/admin/manage-questions', '/admin/train-ai', '/admin/test-chatbot'].includes(location.pathname);
+  
+  return showNavBar ? <NavBar /> : null;
+}
 
 function App() {
-  
   return (
     <BrowserRouter>
-    <>
-    <Routes>
+      <Navigation /> {/* This component now handles showing the NavBar conditionally */}
+      <Routes>
         <Route path="/" element={<ChatPage />} />
         <Route path="/login" element={<Login />} />
         <Route path='/logout' element={<Logout />} />
         <Route path='/register' element={<Register />} />
         <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/admin/manage-questions" element={<ProtectedRoute><ViewQuestionsPage /></ProtectedRoute>} />
         <Route path="/admin/train-ai" element={<ProtectedRoute><ManageDatasetsPage /></ProtectedRoute>} />
         <Route path="/admin/test-chatbot" element={<ProtectedRoute><AdminChatPage /></ProtectedRoute>} />
-        <Route path='/DocumentEditor' element={<DocxEditor/>} />
-        <Route path="/document-manager" element={<DocumentManager />} />
-        <Route path="/ingest-documents" element={<IngestDocuments />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </>
-      
-    
     </BrowserRouter>
-      
   );
 }
 

@@ -36,7 +36,7 @@ function HistoryDrawer() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [hoveredItemIndex, setHoveredItemIndex] = useState(null);
   const [selectedItemIndex, setSelectedItemIndex] = useState(null);
-  const { setChatHistory, setCurrentChatIndex, currentChatIndex, chatHistory, newChat, loadHistory,isTemporary } = useChat();
+  const { setChatHistory, setCurrentChatIndex, currentChatIndex, chatHistory, newChat, loadHistory,handleShare, isTemporary } = useChat();
 
   const handleClick = (event, index) => {
     event.preventDefault();
@@ -59,6 +59,8 @@ function HistoryDrawer() {
       if(currentChatIndex === selectedItemIndex){
         newChat();
       }
+    }else if (action === 'share') {
+      handleShare();
     }
     handleClose();
   };
@@ -115,7 +117,7 @@ function HistoryDrawer() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleMenuAction('share')}>Share</MenuItem>
+        <MenuItem onClick={() => handleMenuAction('share')}>Report Chat</MenuItem>
         <MenuItem onClick={() => handleMenuAction('delete')}>Delete chat</MenuItem>
       </Menu>
     </Drawer>

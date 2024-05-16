@@ -31,7 +31,8 @@ const Register = () => {
             email: data.get('email'),
             password: data.get('password'),
             firstName: data.get('firstName'),
-            lastName: data.get('lastName')
+            lastName: data.get('lastName'),
+            profile_picture: ""
         };
 
         try {
@@ -109,6 +110,10 @@ const Register = () => {
           <BtnCustom type="submit" sx={{ mt: 3, mb: 2 }}>
             Register
           </BtnCustom>
+
+          
+
+          
         </Box>
       </Box>
     </Container>

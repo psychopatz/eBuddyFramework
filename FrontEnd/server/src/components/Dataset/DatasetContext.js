@@ -6,7 +6,7 @@ export const DatasetContext = createContext(); // Export context if needed elsew
 
 export const DatasetProvider = ({ children }) => {
   const [items, setItems] = useState([]);
-  const [isCreating, setIsCreating] = useState(false);
+  const [isCreating, setIsCreating] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [formData, setFormData] = useState({
@@ -46,16 +46,26 @@ export const DatasetProvider = ({ children }) => {
 
   const handleCreate = () => {
     setIsCreating(true);
-    ApiIngest.create(formData)
+    const data = {
+      "name": formData.name,
+      "Question": formData.question,
+      "Answer": formData.answer,
+      "Context": formData.context
+    };
+    console.log('Create action initiated:', data);
+    ApiIngest.create(data)
       .then(response => {
-        setItems([...items, response.data]);
         setIsCreating(false);
         setFormData({ id: 0, name: '', question: '', answer: '', context: '',  }); // Reset form data
+        
       })
       .catch(error => {
         console.error('Failed to create dataset:', error);
         setIsCreating(false);
-      });
+      }).finally(() => {
+        window. location. reload();
+      })
+      ;
   };
 
   const handleUpdate = (id) => {

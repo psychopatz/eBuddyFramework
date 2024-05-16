@@ -10,6 +10,7 @@ class Admin(Base):
     password = Column(String(50))  # Hash this in the future for security
     firstName = Column(String(20))
     lastName = Column(String(20))
+    profile_picture = Column(String(255), nullable=True)
     
 # Datasets Model
 class Dataset(Base):
@@ -40,3 +41,12 @@ class Question(Base):
     dateCreated = Column(DateTime(timezone=True), server_default=func.now())
     isResolved = Column(Boolean, default=False)
     chatHistory = Column(JSON, nullable=False)  # Using JSON to store the list of chat objects
+    datasetID = Column(String(255), nullable=True)
+
+#Photo Model
+class Photo(Base):
+    __tablename__ = 'photos'
+    id = Column(Integer, primary_key=True, index=True)
+    filename = Column(String(255), nullable=False)
+    url = Column(String(255), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

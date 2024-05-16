@@ -65,7 +65,9 @@ const btnStyles = {
 const DatasetsForm = () => {
   const { formData, setFormData, isEditing, setIsEditing,isCreating,handleDelete, handleCreate, handleUpdate } = useContext(DatasetContext);
   
-
+const isFormDataEmpty = () => {
+    return !formData.name && !formData.question && !formData.answer && !formData.context;
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -78,7 +80,7 @@ const DatasetsForm = () => {
     console.log('Form Data:', formData);
      if (isCreating) {
         console.log('Create action initiated');
-        // handleCreate(); // Call create specific logic
+        handleCreate(); // Call create specific logic
     } else if (isEditing) {
         console.log('Update action initiated');
         handleUpdate(formData.id);
@@ -169,7 +171,7 @@ const DatasetsForm = () => {
         {formData.name && !isCreating && !isEditing && <BtnCustom onClick={() => handleEditMode()} sx={btnStyles.update}>Edit</BtnCustom>}
         {(isCreating || isEditing) && (
         <BtnCustom type="submit" sx={isCreating ? btnStyles.create : btnStyles.submit}>
-          {isCreating ? "Create" : "Submit Update"}
+          {isFormDataEmpty() && isCreating && isEditing ? "Create" : "Submit"}
         </BtnCustom>
       )}
         {formData.name && !isCreating && !isEditing && <BtnCustom onClick={() => handleDelete(formData.id)} sx={btnStyles.delete}>Delete</BtnCustom>}

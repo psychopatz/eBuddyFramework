@@ -13,4 +13,12 @@ const axiosBackend = axios.create({
   }
 });
 
-export { axiosLLM, axiosBackend };
+const axiosFile = axios.create({
+  baseURL: `${process.env.REACT_APP_BACKEND_URL}`,
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  }
+});
+
+
+export { axiosLLM, axiosBackend, axiosFile };

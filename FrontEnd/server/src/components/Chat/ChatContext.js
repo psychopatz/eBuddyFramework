@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import useLocalStorage from '../../API/useLocalStorage';
 import useFetchData from '../../API/useFetchData';
-import getCurrentDate from '../../Tools/getCurrentDate';
+import GetCurrentDate from '../../Tools/GetCurrentDate';
+import { ApiQuestion } from '../../API/ApiQuestion';
 
 const ChatContext = createContext();
 
@@ -18,25 +19,28 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
 
 
 
-    const [defaultSystemChat, setDefaultSystemChat] = useState([{
-        content: `The Current Date is ${getCurrentDate()}, Your name is CITChat. You can only answer questions about the provided context. If you know the answer but it is not based in the provided context, 
-        don't provide the answer and say you're sorry you don't know yet. Don't say "The context provided" say "My current knowledge" just state the answer is not in the context provided. Always add an emoji to the end of your answer based on how you feel and greet the user.`,
-        role: 'system'
-    }]);
+        const [defaultSystemChat, setDefaultSystemChat] = useState([{
+            content: `The Current Time and Date today is ${GetCurrentDate()}. Your name is CITChat. You can only answer questions if its provided in the context. 
+            If its not provided in the context Don't provide the answer, just say you're sorry that you don't know it yet and put %notLearned% at the end of your answer.
+            Instead of saying "The context provided" say "My current knowledge" instead of stating if its not in the context. 
+            If the user asks for a photo's or Logo, just give the exact photo link as long as it is in the context, if not found just don't provide.
+            Always add an emoji to the end of your answer based on how you feel and greet the user.`,
+            role: 'system'
+        }]);
 
     const [boilerPlateMessages, setBoilerPlateMessages] = useState( [{
         content: "**CITChat** is *thinking*,",
         role: "assistant"
     }]);
 
-    useEffect(() => {
+    useEffect(() => { //Fetch System Chat From the server backend gitapulan kog optimize
         if (!isLoadingSysChat && systemChatData && !errorSysChat) {
-            const newContent = `The Current Date is ${getCurrentDate()}, ${systemChatData.content}`;
+            const newContent = `The Current Time and Date today is ${GetCurrentDate()}, ${systemChatData.content}`;
             setDefaultSystemChat([{ content: newContent, role: 'system' }]);
         }
     }, [systemChatData, isLoadingSysChat, errorSysChat]);
 
-    useEffect(() => {
+    useEffect(() => { //Fetch Boilerplate From the server backend gitapulan kog optimize
         if (!isLoadingBoilerPlate && boilerPlateData && !errorBoilerPlate) {
             const newContent = boilerPlateData.content || boilerPlateMessages[0].content;
             setBoilerPlateMessages([{ content: newContent, role: 'assistant' }]);
@@ -58,11 +62,39 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
 
     const loadHistory = (index) => {
         setCurrentChatIndex(index);
-        setMessages(chatHistory[index] || []);
+        // setMessages(chatHistory[index] || []);
+        console.log("Loading history at index: ", index);
+        window.location.reload();
     };
 
+      const handleShare = () => {
+        if (messages.length > 0) {
+            const summaryContent = messages.length >= 2 ? messages[messages.length - 2].content : messages[0].content;
+            const data = {
+            "summary": summaryContent,
+            "isResolved": false,
+            "chatHistory": messages,
+            };
+            console.log('Create action initiated:', data);
+            ApiQuestion.create(data)
+            .then(response => {
+               console.log("Share successful: ", response);
+                
+            })
+            .catch(error => {
+                console.error('Failed to create dataset:', error);
+            }).finally(() => {
+                // window. location. reload();
+            })
+            ;
+            
+        }
+            
+        };
+
     return (
-        <ChatContext.Provider value={{ chatHistory, setChatHistory, currentChatIndex, setCurrentChatIndex, messages, setMessages, newChat, loadHistory, boilerPlateMessages, defaultSystemChat,isTemporary }}>
+        <ChatContext.Provider 
+        value={{ chatHistory, setChatHistory, currentChatIndex, setCurrentChatIndex, messages, setMessages, newChat, loadHistory, boilerPlateMessages, defaultSystemChat,isTemporary,handleShare }}>
             {children}
         </ChatContext.Provider>
     );

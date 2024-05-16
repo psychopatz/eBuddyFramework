@@ -2,36 +2,16 @@ import React, { useState, useEffect } from 'react';
 import ChatBubble from './ChatBubble';
 import InputBox from '../InputBox';
 import useChatCompletion from '../../API/useChatCompletion';
-// import getCurrentDate from '../../Tools/getCurrentDate';
-// import useLocalStorage, { setItem, getItem, removeItem } from '../../API/useLocalStorage';
 import { Box, Button } from '@mui/material';
 import { useChat } from './ChatContext';
 const ChatModule = () => {
     const [shouldFetch, setShouldFetch] = useState(false);
-    // const [messages, setMessages] = useState([]);
     const [inputText, setInputText] = useState('');
 
     const { fetchData, data, isLoading, error, setMessages: updateApiMessages } = useChatCompletion();
-    const { chatHistory, currentChatIndex, setChatHistory,messages,setMessages,boilerPlateMessages,defaultSystemChat } = useChat();
-    // const [chatHistory, setChatHistory] = useLocalStorage('chatHistory', []);
-    // const [currentChatIndex, setCurrentChatIndex] = useLocalStorage('currentChatIndex', 0);
-
-    // const [boilerPlateMessages] = useState([
-    //     {
-    //     content: "**CITChat** is *thinking*, \nPlease Wait",
-    //     role: "assistant"
-    // }]);
-
-    // const defaultSystemChat =[{
-    //     content: `Current Date: ${getCurrentDate()}, Your name is CITChat. You can only answer questions about the provided context.
-    //               If you know the answer but it is not based in the provided context, don't provide the answer and say youre sorry you don't know yet.
-    //               Avoid saying "The context provided " say "My current knowledge"
-    //               just state the answer is not in the context provided. Always add an emoji to the end of your answer based on how you feel and greet the user.`,
-    //     role: 'system'
-    // }];
-
-    
-    //Save ChatHistory to localStorage
+    const { chatHistory, currentChatIndex, setChatHistory,messages,setMessages,boilerPlateMessages,defaultSystemChat,handleShare } = useChat();
+    const [isUnfinished, setIsUnfinished] = useState(false);
+ 
     const updateMessageInHistory = (index, newMessage) => {
         setChatHistory((prevHistory) => {
             const updatedHistory = [...prevHistory];
@@ -42,18 +22,31 @@ const ChatModule = () => {
 };
 
 
-    //  const newChat =()=>{
-    //      setMessages([]);
-    //      setCurrentChatIndex(chatHistory.length-1);
-    //      setChatHistory([]);
+     const resumeChat =()=>{
+            const newMessages = [...defaultSystemChat,...messages];
+            console.log("resumedChat: ", newMessages);
+            updateApiMessages(newMessages);
+            console.log("Server Data: ", data);
+            setShouldFetch(true);
+            setIsUnfinished(false);
         
-    //  }
+     }
+
+
 
 
     useEffect(() => {
-        if(chatHistory[currentChatIndex]) {
-            setMessages(chatHistory[currentChatIndex]);
+       if (chatHistory[currentChatIndex]) {
+        setMessages(chatHistory[currentChatIndex]);
+        if (chatHistory[currentChatIndex].length > 0) {
+            const isUnfinished = chatHistory[currentChatIndex][chatHistory[currentChatIndex].length - 1].role === "user";
+            console.log("Is conversation unfinished: ", isUnfinished);
+            setIsUnfinished(isUnfinished);
+        } else {
+            setIsUnfinished(false);
         }
+    }  
+        
        
     }, []);
 
@@ -67,20 +60,35 @@ const ChatModule = () => {
 
         
     useEffect(() => {
-        if(data && data.choices[0].message.content !== "" && !isLoading) {
-            const { content, role } = data.choices[0].message;
-            addMessage(content, role);
-            console.log("currentIndex: ",currentChatIndex );
+        //When getting the response from the server add the response to the chat history
+       if(data && data.choices[0].message.content !== "" && !isLoading) {
+            let { content, role } = data.choices[0].message;
+            console.log("Server Response: ", content);
+            
+            // Check if the content includes the "%notLearned%" string Send the content to the shared
+            if (content.includes("%notLearned%")) {
+                // Remove the "%notLearned%" string from the content and send to the shared
+                console.log("AI Unlearned context Found: ", content);
+                content = content.replace(/%notLearned%/g, "");
+                addMessage(content, role);
+                handleShare()
+            }else{
+                addMessage(content, role);
+
+            }
+
+            
+            console.log("currentIndex: ", currentChatIndex);
+
             // Scroll to the bottom of the page
             setTimeout(() => {
                 window.scrollTo({
                     top: document.body.scrollHeight,
-                    behavior: 'smooth'  // Smooth scroll makes the transition gradual
+                    behavior: 'smooth'  // Smooth scroll makes the transition gradual but not working since bubble is currently dynamic
                 });
             }, 1000);
-            
-            
         }
+
 
     }, [data]);
 
@@ -111,10 +119,12 @@ const ChatModule = () => {
     };
 
 
+
     return (
         <>
 
             <Box sx={{ paddingBottom: '100px', overflow: 'auto'}}>
+                
                 {messages.map((message, index) => (
                 <>
                 
@@ -124,13 +134,19 @@ const ChatModule = () => {
                 </>
                 
             ))}
-             <InputBox 
+            
+             {!isUnfinished && <InputBox 
                 value={inputText}
                 placeholder="Type your message here..."
                 onChange={handleInputChange}
                 onSend={handleSubmit}
                 isDisabled={isLoading}
-            />
+            />}
+            {isUnfinished && <Button sx={{
+                position: 'fixed',
+                bottom: 0,
+                left: '45%', 
+                }} onClick={()=>resumeChat()}>Resume Chat</Button>}
             
             </Box>
            

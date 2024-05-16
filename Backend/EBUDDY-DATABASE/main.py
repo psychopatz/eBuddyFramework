@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException, Depends, status, BackgroundTasks
+from fastapi import FastAPI, HTTPException, Depends, status, BackgroundTasks,  File, UploadFile 
+from starlette.responses import HTMLResponse, FileResponse 
+import os
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional, Annotated, Any
@@ -7,7 +9,10 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from pgpt_python.client import PrivateGPTApi
 import models
-from models import Admin, Dataset, Question, Prompt
+from models import Admin, Dataset, Question, Prompt, Photo
+
+BackendCurrentURL = "http://localhost:8000"
+privateGPTBackendURL = "http://localhost:8001"
 
 
 
@@ -32,7 +37,7 @@ app.add_middleware(
 
 
 #PrivateGPT URL, the ingestion service is usually hidden  basin mahack so ari ra i expose
-client = PrivateGPTApi(base_url="http://localhost:8001")
+client = PrivateGPTApi(base_url=privateGPTBackendURL)
 
 
 # Initialize the database 
@@ -54,12 +59,14 @@ class AdminBase(BaseModel):
     password: str
     firstName: str
     lastName: str
+    profile_picture: Optional[str] = None
 
 class AdminUpdate(BaseModel):
     email: str
     password: str
     firstName: str
     lastName: str
+    profile_picture: Optional[str] = None
     
 class AdminId(BaseModel):
     id: int
@@ -240,6 +247,7 @@ def read_system_prompt(id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="System prompt not found")
     return prompt
 
+
 @app.put("/prompts/{id}", status_code=status.HTTP_200_OK)
 def update_system_prompt(id: str, prompt_data: PromptUpdate, db: Session = Depends(get_db)):
     db_prompt = db.query(Prompt).filter(Prompt.id == id).first()
@@ -270,6 +278,7 @@ class QuestionBase(BaseModel):
     summary: str
     isResolved: bool = False
     chatHistory: List[dict]  # List of objects with 'context' and 'role'
+    
 
 class QuestionCreate(QuestionBase):
     pass
@@ -278,6 +287,7 @@ class QuestionUpdate(BaseModel):
     summary: Optional[str] = None
     isResolved: Optional[bool] = None
     chatHistory: Optional[List[dict]] = None
+    datasetID: Optional[str] = ""
 
 class QuestionDisplay(BaseModel):
     id: int
@@ -335,6 +345,12 @@ def delete_question(id: int, db: Session = Depends(get_db)):
     db.delete(db_question)
     db.commit()
     return {"message": "Question deleted successfully"}
+
+# @app.get("/questions/count_not_resolved", status_code=status.HTTP_200_OK)
+# def count_not_resolved_questions(db: Session = Depends(get_db)):
+#     count = db.query(Question).filter(Question.isResolved == False).count()
+#     return {"not_resolved_count": count}
+
 
 
 #Utils
@@ -405,10 +421,8 @@ async def delete_ingest_dataset(id: int, db:db_dependency):
 def update_ingest_text_in_background(dataset_name, text, db_dataset, db):
     now = datetime.now()
     currentDate = now.strftime('%d-%m-%Y %H-%M-%S')
+    previous_ingest_id = db_dataset.IngestId
     
-    # First, delete the previously ingested text if it exists
-    if db_dataset.IngestId:
-        client.ingestion.delete_ingested(db_dataset.IngestId)
     
     # Ingest the new text
     ingested_text_doc_id = client.ingestion.ingest_text(
@@ -421,6 +435,7 @@ def update_ingest_text_in_background(dataset_name, text, db_dataset, db):
     
     db.add(db_dataset)
     db.commit()
+    print("Deleted previous ingestion: ",client.ingestion.delete_ingested(previous_ingest_id))
     db.refresh(db_dataset)
 
     
@@ -441,3 +456,45 @@ async def update_ingest_dataset(id: int, dataset_data: DatasetUpdate,background_
     background_tasks.add_task(update_ingest_text_in_background, db_dataset.name, ingestedText, db_dataset, db)
     
     return {"message": "Dataset updated successfully"}
+
+#Save photo
+
+def save_file_to_disk(file: UploadFile, path: str, filename: str) -> None:
+    try:
+        with open(os.path.join(path, filename), "wb") as buffer:
+            buffer.write(file.file.read())
+    except IOError as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save file: {str(e)}")
+
+def create_photo_url(filename: str) -> str:
+    return f"{BackendCurrentURL}/photos/{filename}"
+
+def save_photo_metadata(db: Session, filename: str, url: str) -> Photo:
+    db_photo = Photo(filename=filename, url=url)
+    db.add(db_photo)
+    db.commit()
+    db.refresh(db_photo)
+    return db_photo
+
+@app.post("/photos/upload/")
+async def upload_photo(file: UploadFile):
+    filename = file.filename
+    file_location = "uploaded_files"  # Folder where files will be stored
+    if not os.path.exists(file_location):
+        os.makedirs(file_location)
+    
+    save_file_to_disk(file, file_location, filename)
+    url = create_photo_url(filename)
+    
+    db = SessionLocal()
+    photo = save_photo_metadata(db, filename, url)
+    db.close()
+    
+    return {"filename": filename, "url": url, "id": photo.id}
+
+@app.get("/photos/get/{filename}")
+async def get_photo(filename: str):
+    file_location = os.path.join("uploaded_files", filename)
+    if os.path.exists(file_location):
+        return FileResponse(file_location)
+    raise HTTPException(status_code=404, detail="File not found")

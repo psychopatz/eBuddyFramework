@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Paper, styled } from '@mui/material';
 import FormatText from '../FormatText';
 import useTypingEffect from '../../Tools/useTypingEffect';
 import LoadingAnimation from '../../Tools/LoadingAnimation';
+import Modal from '../Image/Modal';
 
 // Function to calculate dynamic width based on text length
 const calculateWidth = (text) => {
@@ -60,17 +61,62 @@ const StyledPaper = styled(Paper)(({ theme, role, content }) => ({
     ...getStylesByRole(role),
 }));
 
-// ChatBubble component displaying either loading animation or formatted text
-const ChatBubble = React.memo(({ message, isLoading = false }) => {
-  const typingText = useTypingEffect(message.content, 50); 
+// Function to check if a string is a URL of an image
+const findImageUrls = (text) => {
+    // Regex to match URLs inside and outside quotation marks, capturing the entire URL
+    const regex = /(?:"|')(https?:\/\/\S+?\.(jpeg|jpg|gif|png))(?:"|')|(https?:\/\/\S+?\.(jpeg|jpg|gif|png))/ig;
+    let match;
+    const urls = [];
+    while ((match = regex.exec(text)) !== null) {
+        // Extract URL and check if it includes quotes, remove them if necessary
+        const url = match[1] || match[3]; // match[1] for quoted, match[3] for non-quoted URLs
+        // Replace the localhost base URL with the environment variable, if applicable
+        const updatedUrl = url.replace("http://localhost:8000", process.env.REACT_APP_BACKEND_URL);
+        urls.push(updatedUrl);
+        console.log("Image URL found:", updatedUrl);
+    }
+    if (urls.length > 0) {
+        return urls;
+    }
+    console.log("No image URLs found.");
+    return [];
+};
+
+
+// ChatBubble component displaying either loading animation or formatted text or image
+const ChatBubble = React.memo(({ message, isLoading = false,typingSpeed = 20 }) => {
+    const [modalImage, setModalImage] = useState(null);
+    const modifiedContent = message.content.replace(/http:\/\/localhost:8000/g, process.env.REACT_APP_BACKEND_URL);
+    const typingText = useTypingEffect(modifiedContent, typingSpeed);
+    const imageUrls = findImageUrls(modifiedContent);
+    console.log("imageUrl: ", imageUrls);
+
+    const handleImageClick = (url) => {
+        setModalImage(url);
+    };
+
+    const handleCloseModal = () => {
+        setModalImage(null);
+    };
+
     if (message.role !== 'system') {
         return (
-            <StyledPaper role={message.role} content={message.content}>
+
+            <>
+            <Modal isOpen={modalImage !== null} onClose={handleCloseModal}>
+                <img src={modalImage} alt="Full Size" style={{ maxHeight: '90%', maxWidth: '90%', borderRadius: '10px' }} />
+            </Modal>
+            <StyledPaper role={message.role} content={modifiedContent}>
                 <h3>{message.role === "assistant" ? "CITChat": message.role.toUpperCase()}</h3>
-                <FormatText text={(message.role === 'assistant' && !isLoading ? typingText : message.content)
+                {imageUrls.map(url => (
+                    <img key={url} src={url} alt="Image Not Found" style={{ maxWidth: '30%', borderRadius: '5px', margin: '5px' }} onClick={() => handleImageClick(url)} />
+                ))}
+                <FormatText text={(message.role === 'assistant' && !isLoading ? typingText : modifiedContent)
               } />
                 {(isLoading) && <LoadingAnimation />}
             </StyledPaper>
+            
+            </>
         );
     }
 

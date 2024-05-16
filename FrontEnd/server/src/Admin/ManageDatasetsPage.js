@@ -3,6 +3,7 @@ import { Box, styled } from '@mui/material';
 import DatasetsForm from "../components/Dataset/DatasetsForm";
 import DatasetsListView from "../components/Dataset/DatasetsListView";
 import {DatasetProvider} from "../components/Dataset/DatasetContext";
+import BtnCustom from '../components/BtnCustom';
 
 const FormHeader = styled(Box)({
   display: 'flex',
@@ -39,6 +40,7 @@ const ManageDatasetsPage = () => {
     <DatasetProvider> 
       <PageContainer>
         <LeftPanel>
+          <BtnCustom variant="contained" color="primary" onClick={() => window.location.reload()}>Create New Dataset</BtnCustom>
           <DatasetsListView />
         </LeftPanel>
         <RightPanel>
