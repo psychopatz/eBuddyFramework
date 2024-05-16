@@ -11,8 +11,8 @@ from pgpt_python.client import PrivateGPTApi
 import models
 from models import Admin, Dataset, Question, Prompt, Photo
 
-BackendCurrentURL = "http://localhost:8000"
-privateGPTBackendURL = "http://localhost:8001"
+BackendCurrentURL = "http://192.168.97.155:8000"
+privateGPTBackendURL = "http://192.168.97.155:8001"
 
 
 
