@@ -11,11 +11,12 @@ import AdminChatPage from './Admin/AdminChatPage';
 import ChatPage from './User/ChatPage';
 import NotFound from './NotFound';
 import NavBar from './components/Navbar/Navbar';
+import AccountPage from './components/Profile/AccountPage';
 
 // Navigation component that includes NavBar based on current path
 function Navigation() {
   const location = useLocation();
-  const showNavBar = ['/admin/','/admin', '/admin/manage-questions', '/admin/train-ai', '/admin/test-chatbot'].includes(location.pathname);
+  const showNavBar = ['/admin/','/admin', '/admin/manage-questions', '/admin/train-ai', '/admin/test-chatbot', '/admin/account'].includes(location.pathname);
   
   return showNavBar ? <NavBar /> : null;
 }
@@ -33,6 +34,7 @@ function App() {
         <Route path="/admin/manage-questions" element={<ProtectedRoute><ViewQuestionsPage /></ProtectedRoute>} />
         <Route path="/admin/train-ai" element={<ProtectedRoute><ManageDatasetsPage /></ProtectedRoute>} />
         <Route path="/admin/test-chatbot" element={<ProtectedRoute><AdminChatPage /></ProtectedRoute>} />
+        <Route path='/admin/account' element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

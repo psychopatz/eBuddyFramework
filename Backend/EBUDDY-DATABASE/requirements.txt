@@ -5,3 +5,4 @@ sqlalchemy
 pymysql
 pgpt_python
 apscheduler
+passlib[bcrypt]

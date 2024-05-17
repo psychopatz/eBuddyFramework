@@ -9,12 +9,14 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import inspect
 from pgpt_python.client import PrivateGPTApi
+from passlib.context import CryptContext
 import models
 from models import Admin, Dataset, Question, Prompt, Photo
 
-BackendCurrentURL = "http://192.168.1.2:8000" #"http://192.168.97.155:8000"
-privateGPTBackendURL = "http://192.168.1.2:8001" #"http://192.168.97.155:8001"
+BackendCurrentURL = "http://localhost:8000" #"http://192.168.97.155:8000"
+privateGPTBackendURL = "http://localhost:8001" #"http://192.168.97.155:8001"
 
+pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12)
 
 
 app = FastAPI(
@@ -62,28 +64,29 @@ class AdminBase(BaseModel):
     lastName: str
     profile_picture: Optional[str] = None
 
+    def hash_password(self):
+        self.password = pwd_context.hash(self.password)
+
 class AdminUpdate(BaseModel):
-    email: str
-    password: str
-    firstName: str
-    lastName: str
+    email: Optional[str] = None
+    password: Optional[str] = None
+    firstName: Optional[str] = None
+    lastName: Optional[str] = None
     profile_picture: Optional[str] = None
-    
-class AdminId(BaseModel):
-    id: int
+
+    def update_password(self, new_password: str):
+        return pwd_context.hash(new_password)
 
 @app.post("/admins/create", status_code=status.HTTP_201_CREATED)
-async def create_admin(admin: AdminBase, db:db_dependency):
-    #if email already existed
+async def create_admin(admin: AdminBase, db: db_dependency):
+    admin.hash_password()  # Hash the password before storing it
     existing_admin = db.query(Admin).filter(Admin.email == admin.email).first()
     if existing_admin:
         raise HTTPException(status_code=400, detail="Email already in use")
-    #create new admin
     db_admin = Admin(**admin.dict())
     db.add(db_admin)
     db.commit()
-    if admin is None:
-        raise HTTPException(status_code=404, detail="Admin not found")
+    return {"id": db_admin.id,"email": db_admin.email,"firstName": db_admin.firstName,"lastName": db_admin.lastName,"profile_picture": db_admin.profile_picture}
 
 @app.get("/admins/{id}",status_code=status.HTTP_200_OK)
 async def read_admin(id: int, db:db_dependency):
@@ -96,14 +99,16 @@ async def read_admin(id: int, db:db_dependency):
 async def update_admin(id: int, admin_data: AdminUpdate, db: Session = Depends(get_db)):
     db_admin = db.query(Admin).filter(Admin.id == id).first()
     if db_admin is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Admin not found")
-    
+        raise HTTPException(status_code=404, detail="Admin not found")
+
+    if admin_data.password:
+        admin_data.password = admin_data.update_password(admin_data.password)  # Hash new password
 
     for field, value in admin_data.dict(exclude_unset=True).items():
         setattr(db_admin, field, value)
-    
+
     db.commit()
-    return {"message": "Admin updated successfully"}
+    return {"id": db_admin.id,"email": db_admin.email,"firstName": db_admin.firstName,"lastName": db_admin.lastName,"profile_picture": db_admin.profile_picture}
 
 @app.delete("/admins/{id}",status_code=status.HTTP_200_OK)
 async def delete_admin(id: int, db:db_dependency):
@@ -113,20 +118,22 @@ async def delete_admin(id: int, db:db_dependency):
     db.delete(db_admin)
     db.commit()
 
+
 #Admin Functionalities API
 # TODO Basic verification ra kay galabad akong ulo ahahaha, ig capstone na nako i add ang legit lols
 class AdminLogin(BaseModel):
     email: str
     password: str
     
+    
 @app.post("/admins/login", status_code=status.HTTP_200_OK)
-async def login(admin: AdminLogin, db:db_dependency):
+async def login(admin: AdminLogin, db: db_dependency):
     db_admin = db.query(Admin).filter(Admin.email == admin.email).first()
     if db_admin is None:
         raise HTTPException(status_code=404, detail="Admin not found")
-    if db_admin.password != admin.password:
+    if not pwd_context.verify(admin.password, db_admin.password):
         raise HTTPException(status_code=401, detail="Invalid password")
-    return {"message": "Admin logged in successfully", "id": db_admin.id}
+    return {"id": db_admin.id,"email": db_admin.email,"firstName": db_admin.firstName,"lastName": db_admin.lastName,"profile_picture": db_admin.profile_picture}
     
 
 
@@ -502,7 +509,7 @@ def save_file_to_disk(file: UploadFile, path: str, filename: str) -> None:
         raise HTTPException(status_code=500, detail=f"Failed to save file: {str(e)}")
 
 def create_photo_url(filename: str) -> str:
-    return f"{BackendCurrentURL}/photos/{filename}"
+    return f"http://localhost:8000/photos/get/{filename}"
 
 def save_photo_metadata(db: Session, filename: str, url: str) -> Photo:
     db_photo = Photo(filename=filename, url=url)

@@ -7,7 +7,7 @@ class Admin(Base):
     __tablename__ = "admins"
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(50), unique=True, index=True)
-    password = Column(String(50))  # Hash this in the future for security
+    password = Column(String(255))  # Nvm na hash2 na
     firstName = Column(String(20))
     lastName = Column(String(20))
     profile_picture = Column(String(255), nullable=True)
