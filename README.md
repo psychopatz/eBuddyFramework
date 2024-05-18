@@ -1,4 +1,5 @@
 # View This tutorial for backend https://www.youtube.com/watch?v=Ww2oelybDz8
+Ollama Google Colab: [Here](https://colab.research.google.com/drive/1Ez7NJSmqhXbQAL9hNvom5cVtavA_Q1gj?usp=sharing)
 
 Prereq:
 Git

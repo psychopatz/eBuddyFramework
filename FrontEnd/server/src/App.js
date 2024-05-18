@@ -4,7 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './Admin/Login';
 import Logout from './Admin/Logout';
 import Register from './Admin/Register';
-import Dashboard from './Admin/Dashboard';
+import DashboardPage from './Admin/DashboardPage';
 import ViewQuestionsPage from './Admin/ViewQuestionsPage';
 import ManageDatasetsPage from './Admin/ManageDatasetsPage';
 import AdminChatPage from './Admin/AdminChatPage';
@@ -12,6 +12,7 @@ import ChatPage from './User/ChatPage';
 import NotFound from './NotFound';
 import NavBar from './components/Navbar/Navbar';
 import AccountPage from './components/Profile/AccountPage';
+import "./App.css";
 
 // Navigation component that includes NavBar based on current path
 function Navigation() {
@@ -30,7 +31,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path='/logout' element={<Logout />} />
         <Route path='/register' element={<Register />} />
-        <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/admin/manage-questions" element={<ProtectedRoute><ViewQuestionsPage /></ProtectedRoute>} />
         <Route path="/admin/train-ai" element={<ProtectedRoute><ManageDatasetsPage /></ProtectedRoute>} />
         <Route path="/admin/test-chatbot" element={<ProtectedRoute><AdminChatPage /></ProtectedRoute>} />

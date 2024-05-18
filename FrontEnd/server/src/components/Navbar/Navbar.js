@@ -56,7 +56,7 @@ function NavBar() {
     ];
 
     return (
-        <AppBar position="static">
+        <AppBar position="sticky" sx={{ top: 0 }}>
             <StyledToolbar>
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
                     CITChat

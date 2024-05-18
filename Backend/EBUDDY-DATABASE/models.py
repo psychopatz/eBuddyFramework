@@ -31,6 +31,7 @@ class Prompt(Base):
     id = Column(String(50), primary_key=True, index=True)  
     content = Column(Text, nullable=False)
     role = Column(String(255), nullable=False)
+    popularity = Column(Integer, default=0)
 
 
 # Questions Model

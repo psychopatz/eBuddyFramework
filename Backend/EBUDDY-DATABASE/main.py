@@ -13,8 +13,8 @@ from passlib.context import CryptContext
 import models
 from models import Admin, Dataset, Question, Prompt, Photo
 
-BackendCurrentURL = "http://localhost:8000" #"http://192.168.97.155:8000"
-privateGPTBackendURL = "http://localhost:8001" #"http://192.168.97.155:8001"
+BackendCurrentURL = "http://192.168.32.126:8000" #"http://192.168.97.155:8000"
+privateGPTBackendURL = "http://192.168.32.126:8001" #"http://192.168.97.155:8001"
 
 pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12)
 
@@ -193,6 +193,7 @@ async def read_dataset(id: int, db:db_dependency):
 
 @app.put("/datasets/{id}", status_code=status.HTTP_200_OK)
 async def update_dataset(id: int, dataset_data: DatasetUpdate, db: Session = Depends(get_db)):
+    print(dataset_data)
     db_dataset = db.query(Dataset).filter(Dataset.id == id).first()
     if db_dataset is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found")
@@ -221,6 +222,7 @@ async def delete_dataset(id: int, db:db_dependency):
 class PromptBase(BaseModel):
     content: str
     role: str
+    popularity: int
 
 class SystemPromptCreate(BaseModel):
     id: str
@@ -231,6 +233,13 @@ class SystemPromptCreate(BaseModel):
 class PromptUpdate(BaseModel):
     content: Optional[str] = None
     role: Optional[str] = None
+    popularity: Optional[int] = None
+    
+@app.get("/prompts/all", response_model=List[PromptBase], status_code=status.HTTP_200_OK)
+async def get_all_prompts(db: Session = Depends(get_db)):
+    # Fetch all prompts from the database
+    prompts = db.query(Prompt).all()
+    return prompts
 
 
 @app.post("/prompts/", status_code=status.HTTP_201_CREATED)
@@ -246,6 +255,32 @@ def create_system_prompt(prompt: SystemPromptCreate, db: Session = Depends(get_d
     db.commit()
     db.refresh(db_prompt)
     return db_prompt
+
+@app.post("/prompts/{id}/increment-popularity", status_code=status.HTTP_200_OK)
+async def increment_prompt_popularity(id: str, db: Session = Depends(get_db)):
+    # Retrieve the prompt from the database
+    prompt = db.query(Prompt).filter(Prompt.id == id).first()
+    if prompt is None:
+        raise HTTPException(status_code=404, detail="Prompt not found")
+    
+    # Increment the popularity
+    prompt.popularity += 1
+    db.commit()
+
+    return {"id": prompt.id, "message": f"Increased popularity to {prompt.popularity}"}
+
+@app.post("/prompts/{id}/reset-popularity", status_code=status.HTTP_200_OK)
+async def reset_prompt_popularity(id: str, db: Session = Depends(get_db)):
+    # Retrieve the prompt from the database
+    prompt = db.query(Prompt).filter(Prompt.id == id).first()
+    if prompt is None:
+        raise HTTPException(status_code=404, detail="Prompt not found")
+    
+    # Increment the popularity
+    prompt.popularity = 0
+    db.commit()
+
+    return {"id": prompt.id, "message": f"Reset popularity to {prompt.popularity}"}
 
 
 @app.get("/prompts/{id}", status_code=status.HTTP_200_OK)
@@ -447,10 +482,14 @@ async def delete_ingest_dataset(id: int, db:db_dependency):
     db.delete(db_dataset)
     db.commit()
     
-def update_ingest_text_in_background(dataset_name, text, db_dataset, db):
+def update_ingest_text_in_background(dataset_name, text, db_dataset,dataset_data, db):
     now = datetime.now()
     currentDate = now.strftime('%d-%m-%Y %H-%M-%S')
     previous_ingest_id = db_dataset.IngestId
+    
+    # Update dataset fields
+    for field, value in dataset_data.dict(exclude_unset=True).items():
+        setattr(db_dataset, field, value)
 
     try:
         # Deleting the previous ingestion
@@ -465,35 +504,30 @@ def update_ingest_text_in_background(dataset_name, text, db_dataset, db):
 
         # Update the dataset record with the new ingestion details
         db_dataset.IngestId = ingested_text_doc_id
-        db.merge(db_dataset)
+
+        db.add(db_dataset)
         db.commit()
         db.refresh(db_dataset)
-        state = inspect(db_dataset)
-        print("Instance state before commit:", state.persistent, state.detached, state.transient, state.deleted)
         
         print(f"Successfully updated ingestion for dataset {dataset_name} with new ID {ingested_text_doc_id}")
     except Exception as e:
         # Log specific exceptions or handle them differently as needed
         print(f"Error during ingestion update for {dataset_name}: {e}")
 
-    
 @app.put("/llm/ingest/{id}", status_code=status.HTTP_200_OK)
-async def update_ingest_dataset(id: int, dataset_data: DatasetUpdate,background_tasks: BackgroundTasks, db: Session = Depends(get_db) ):
+async def update_ingest_dataset(id: int, dataset_data: DatasetUpdate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    print(dataset_data)
     db_dataset = db.query(Dataset).filter(Dataset.id == id).first()
     if db_dataset is None:
         print("Error Updating, Dataset not found")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found")
-    
-    # Update dataset fields
-    for field, value in dataset_data.dict(exclude_unset=True).items():
-        setattr(db_dataset, field, value)
 
     # Prepare text for ingestion
     ingestedText = f"{db_dataset.Question.replace('\n\n', ' ')} \n {db_dataset.Answer.replace('\n\n', ' ')} \n {db_dataset.Context.replace('\n\n', ' ')}"
     
     # Update ingestion in background
     print("Sent to the ingestion queue")
-    background_tasks.add_task(update_ingest_text_in_background, db_dataset.name, ingestedText, db_dataset, db)
+    background_tasks.add_task(update_ingest_text_in_background, db_dataset.name, ingestedText, db_dataset,dataset_data, db)
     
     return {"message": "Dataset updated successfully"}
 

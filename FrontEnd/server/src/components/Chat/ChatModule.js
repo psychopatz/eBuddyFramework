@@ -63,7 +63,7 @@ const ChatModule = () => {
         //When getting the response from the server add the response to the chat history
        if(data && data.choices[0].message.content !== "" && !isLoading) {
             let { content, role } = data.choices[0].message;
-            console.log("Server Response: ", content);
+            console.log("Server Response: ", data.choices);
             
             // Check if the content includes the "%notLearned%" string Send the content to the shared
             if (content.includes("%notLearned%")) {

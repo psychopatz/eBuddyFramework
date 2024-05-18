@@ -84,11 +84,18 @@ export const DatasetProvider = ({ children }) => {
   };
 
   const handleUpdate = (id) => {
+    const data = {
+      "name": formData.name,
+      "Question": formData.question,
+      "Answer": formData.answer,
+      "Context": formData.context
+    };
+    console.log('Form Data: Sent to API', data);
     setIsEditing(true);
-    ApiIngest.update(id, formData)
+    ApiIngest.update(id, data)
       .then(() => {
+        console.log('Form Data updated:', data);
         setIsEditing(false);
-        setFormData({ id: 0, name: '', question: '', answer: '', context: '', ingestId: '' }); // Reset form data
       })
       .catch(error => {
         console.error('Failed to update dataset:', error);

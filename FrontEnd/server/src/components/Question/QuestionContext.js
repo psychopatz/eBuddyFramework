@@ -50,8 +50,11 @@ export const QuestionProvider = ({ children }) => {
 
   const handleUpdate = (id) => {
     setIsEditing(true);
-    formData.isResolved = true
-    ApiQuestion.update(id, formData)
+    let data = {
+      ...formData  
+    }
+    data.isResolved = true
+    ApiQuestion.update(id, data)
       .then(() => {
 
         window. location. reload();

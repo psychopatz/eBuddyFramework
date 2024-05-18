@@ -82,7 +82,7 @@ function QuestionsListView({ listHeight }) {
         onClose={handleClose}
       >
         <MenuItem onClick={() => { 
-          console.log("Edit action for:", currentId);
+          console.log("Set for Resolved:", currentId);
           handleUpdate(currentId);
           handleClose(); 
           }}>Set Question Resolved</MenuItem>
