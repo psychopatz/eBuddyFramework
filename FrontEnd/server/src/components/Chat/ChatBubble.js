@@ -107,7 +107,8 @@ const ChatBubble = React.memo(({ message, isLoading = false,typingSpeed = 20 }) 
                 <img src={modalImage} alt="Full Size" style={{ maxHeight: '90%', maxWidth: '90%', borderRadius: '10px' }} />
             </Modal>
             <StyledPaper role={message.role} content={modifiedContent}>
-                <h3>{message.role === "assistant" ? "CITChat": message.role.toUpperCase()}</h3>
+                {message.role === "assistant" && <img src={'/logo.png'} alt="Logo" style={{ width: '6%', height: '6%', float: 'left' }} />}
+                <h3>{message.role === "assistant" ? "": message.role.toUpperCase()}</h3>
                 {imageUrls.map(url => (
                     <img key={url} src={url} alt="Image Not Found" style={{ maxWidth: '30%', borderRadius: '5px', margin: '5px' }} onClick={() => handleImageClick(url)} />
                 ))}

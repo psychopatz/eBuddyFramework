@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, status, BackgroundTasks,  File, UploadFile 
 from starlette.responses import HTMLResponse, FileResponse 
 import os
+from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional, Annotated, Any
@@ -13,8 +14,10 @@ from passlib.context import CryptContext
 import models
 from models import Admin, Dataset, Question, Prompt, Photo
 
-BackendCurrentURL = "http://192.168.32.126:8000" #"http://192.168.97.155:8000"
-privateGPTBackendURL = "http://192.168.32.126:8001" #"http://192.168.97.155:8001"
+load_dotenv()
+BackendCurrentURL = os.getenv("BackendCurrentURL") #"http://192.168.97.155:8000"
+privateGPTBackendURL = os.getenv("privateGPTBackendURL") #"http://192.168.97.155:8001"
+print(f"Backend URL: {BackendCurrentURL}. LLM Url; {privateGPTBackendURL}")
 
 pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12)
 

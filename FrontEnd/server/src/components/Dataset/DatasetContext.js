@@ -62,10 +62,10 @@ export const DatasetProvider = ({ children }) => {
   const handleCreate = () => {
     setIsCreating(true);
     const data = {
-      "name": formData.name,
-      "Question": formData.question,
-      "Answer": formData.answer,
-      "Context": formData.context
+      "name": formData.name.replace(/[^\x00-\x7F]/g,""),
+      "Question": formData.question.replace(/[^\x00-\x7F]/g,""),
+      "Answer": formData.answer.replace(/[^\x00-\x7F]/g,""),
+      "Context": formData.context.replace(/[^\x00-\x7F]/g,"")
     };
     console.log('Create action initiated:', data);
     ApiIngest.create(data)
@@ -85,10 +85,10 @@ export const DatasetProvider = ({ children }) => {
 
   const handleUpdate = (id) => {
     const data = {
-      "name": formData.name,
-      "Question": formData.question,
-      "Answer": formData.answer,
-      "Context": formData.context
+      "name": formData.name.replace(/[^\x00-\x7F]/g,""),
+      "Question": formData.question.replace(/[^\x00-\x7F]/g,""),
+      "Answer": formData.answer.replace(/[^\x00-\x7F]/g,""),
+      "Context": formData.context.replace(/[^\x00-\x7F]/g,"")
     };
     console.log('Form Data: Sent to API', data);
     setIsEditing(true);

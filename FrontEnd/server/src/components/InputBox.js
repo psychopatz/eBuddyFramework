@@ -1,9 +1,9 @@
 import React from 'react';
-import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
+import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import SendIcon from '@mui/icons-material/Send';
-import { styled } from '@mui/material/styles';
+import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 
 const StyledTextarea = styled(BaseTextareaAutosize)(({ theme }) => ({
     boxSizing: 'border-box',
@@ -17,12 +17,13 @@ const StyledTextarea = styled(BaseTextareaAutosize)(({ theme }) => ({
     color: theme.palette.text.primary,
     backgroundColor: theme.palette.background.paper,
     border: `1px solid ${theme.palette.divider}`,
-    boxShadow: `0px 2px 2px rgba(0, 0, 0, 0.1)`,
+    boxShadow: `0px 2px 2px rgba(0, 0, 0, 0.4)`,
+    borderRadius: theme.shape.borderRadius,
     '&:hover': {
         borderColor: theme.palette.primary.main,
     },
     '&:focus': {
-        borderColor: theme.palette.primary.main,
+        borderColor: theme.palette.secondary.main,
         boxShadow: `0 0 0 3px ${theme.palette.primary.light}`,
     },
     '&:focus-visible': {
@@ -32,55 +33,34 @@ const StyledTextarea = styled(BaseTextareaAutosize)(({ theme }) => ({
 
 const StyledStack = styled(Stack)(({ theme }) => ({
     position: 'fixed',
-    bottom: 0,
-    left: '30%', // Start at 25% from the left to center the stack that takes up 50% width
-    right: '30%', // Ensures the total width is 50% by also setting right to 25%
+    bottom: 50,
+    left: '15%', 
+    right: '15%',
     padding: theme.spacing(2),
-    backgroundColor: theme.palette.background.default,
-    boxShadow: '0 -2px 4px rgba(0,0,0,0.1)',
-    zIndex: 1200,
-
-    fontFamily: theme.typography.fontFamily,
-    fontSize: theme.typography.fontSize,
-    fontWeight: theme.typography.fontWeightRegular,
-    lineHeight: theme.typography.lineHeight,
-    padding: theme.spacing(1),
+    backgroundColor: theme.palette.primary.main,
+    boxShadow: '0 -2px 4px rgba(0,0,0,0.4)',
     borderRadius: theme.shape.borderRadius,
-    color: theme.palette.text.primary,
-    backgroundColor: theme.palette.background.paper,
-    border: `1px solid ${theme.palette.divider}`,
-    boxShadow: `0px 2px 2px rgba(0, 0, 0, 0.1)`,
-    '&:hover': {
-        borderColor: theme.palette.primary.main,
-    },
-    '&:focus': {
-        borderColor: theme.palette.primary.main,
-        boxShadow: `0 0 0 3px ${theme.palette.primary.light}`,
-    },
-    '&:focus-visible': {
-        outline: 'none',
-    },
-}
-    
-));
+    zIndex: 1200,
+}));
 
 const InputBox = ({ value, placeholder, onSend, onChange, isDisabled }) => {
     return (
         <StyledStack direction="row" spacing={2} alignItems="center">
-            <textarea
+            <StyledTextarea
                 aria-label="input area"
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                style={{ flexGrow: 1, height: '50px' }} // Example height, adjust as needed
+                style={{ flexGrow: 1, minHeight: '50px' }} 
             />
-            <button 
-                type="button"
+            <Button 
+                variant="contained"
+                endIcon={<SendIcon />}
                 onClick={onSend}
                 disabled={isDisabled}
             >
                 Send
-            </button>
+            </Button>
         </StyledStack>
     );
 };

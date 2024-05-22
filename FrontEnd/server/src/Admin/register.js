@@ -5,6 +5,37 @@ import { ApiAdmin } from "../API/ApiAdmin";
 import { useNavigate } from "react-router-dom";
 import useLocalStorage from "../API/useLocalStorage";
 import { useState, useEffect } from "react";
+import styled from "@emotion/styled";
+import { Canvas } from '@react-three/fiber';
+import Pseudo3dImage from "../components/Image/Pseudo3dImage";
+
+
+const FullScreenWrapper = styled('div')({
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100vw',
+  height: '100vh',
+  zIndex: 1, // Ensure it's above other elements if necessary
+  backgroundColor: 'primary.main', // Optional, based on your theme or preference
+  display: 'flex', // Added to use flexbox for centering
+  alignItems: 'center', // Aligns children vertically in the center
+  justifyContent: 'center', // Aligns children horizontally in the center
+});
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  zIndex: 10, // Ensures the box is above the canvas
+  position: 'absolute', // Keep position absolute to layer it on top of the Canvas
+  top: '50%', // Set top to 50% of its parent
+  left: '50%', // Set left to 50% of its parent
+  transform: 'translate(-50%, -50%)', // Adjust for centered positioning
+  padding: theme.spacing(4), // Use theme spacing for consistent padding
+  borderRadius: theme.shape.borderRadius, // Use theme border radius
+  display: 'flex',
+  flexDirection: 'column', // Stack children vertically
+  alignItems: 'center', // Center children horizontally
+  justifyContent: 'center', // Center children vertically
+}));
 
 const Register = () => {
   const navigate = useNavigate();
@@ -56,9 +87,12 @@ const Register = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <FullScreenWrapper>
+            <StyledBox>
+                <img src="/banner.png" alt="Logo" style={{ width: '100px', marginBottom: '20px' }} />
+                <Container component="main" maxWidth="xs">
       <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" sx={{color: 'secondary.main'}}>
           Admin Registration
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
@@ -75,6 +109,16 @@ const Register = () => {
         </Box>
       </Box>
     </Container>
+            </StyledBox>
+            <Canvas style={{
+                width: '100%',
+                height: '100%',
+                filter: 'brightness(30%)'
+            }}>
+                <Pseudo3dImage imageUrl="/landingImage.png" depthMapUrl="/landingImage_depth.png" />
+            </Canvas>
+        </FullScreenWrapper>
+    
   );
 }
 

@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import theme from './theme'; 
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './Admin/Login';
 import Logout from './Admin/Logout';
@@ -12,7 +14,9 @@ import ChatPage from './User/ChatPage';
 import NotFound from './NotFound';
 import NavBar from './components/Navbar/Navbar';
 import AccountPage from './components/Profile/AccountPage';
-import "./App.css";
+import LandingPage from './User/LandingPage';
+import DocumentEditor from './Admin/DocumentEditor';
+
 
 // Navigation component that includes NavBar based on current path
 function Navigation() {
@@ -24,10 +28,14 @@ function Navigation() {
 
 function App() {
   return (
+    <ThemeProvider theme={theme}> 
+      <CssBaseline /> 
     <BrowserRouter>
-      <Navigation /> {/* This component now handles showing the NavBar conditionally */}
-      <Routes>
-        <Route path="/" element={<ChatPage />} />
+      <Navigation /> 
+      <main style={{ position: 'relative', flex: 1 }}>
+        <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/chat" element={<ChatPage />} />
         <Route path="/login" element={<Login />} />
         <Route path='/logout' element={<Logout />} />
         <Route path='/register' element={<Register />} />
@@ -36,9 +44,13 @@ function App() {
         <Route path="/admin/train-ai" element={<ProtectedRoute><ManageDatasetsPage /></ProtectedRoute>} />
         <Route path="/admin/test-chatbot" element={<ProtectedRoute><AdminChatPage /></ProtectedRoute>} />
         <Route path='/admin/account' element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+        <Route path='/docs' element={<DocumentEditor />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+
+      </main>
     </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

@@ -74,7 +74,7 @@ const DashboardPage = () => {
         <Typography>{GetGreeting()}, {firstName} {lastName}</Typography>
 
         <h2>Datasets Graph pila kabuok ang answeranan ug pila na ang naansweran nga piechart https://mui.com/x/react-charts/pie/</h2>
-        <PieModule answers={items ? items.length : 100 } questions={questions ? questions.length : 100} errors={100}/>
+        <PieModule answers={items ? items.length : 100 } questions={questions ? questions.length : 100} errors={ingestsDocs ? ingestsDocs.length - items.length : 0}/>
         
         <h2>List of Prompts ranked by popularity para sa chat defaults nga common questions</h2>
 

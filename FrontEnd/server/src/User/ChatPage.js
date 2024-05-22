@@ -3,6 +3,7 @@ import ChatModule from "../components/Chat/ChatModule";
 import { ChatProvider } from "../components/Chat/ChatContext";
 import HistoryDrawer from "../components/Chat/HistoryDrawer";
 import Banner from "./Banner";
+import Footer from "./Footer";
 
 const ChatPage = () => {
     return ( 
@@ -21,6 +22,7 @@ const ChatPage = () => {
         </Box>
 
         </ChatProvider>
+        <Footer/>
         </>
        
     );

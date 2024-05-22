@@ -92,6 +92,7 @@ const QuestionsForm = () => {
         color="primary"
         sx={{
           position: 'fixed',
+          width: 'calc(30% - 40px)',
           bottom: 20, // Adjust based on required distance from the bottom
           left: '50%',
           transform: 'translateX(-50%)',

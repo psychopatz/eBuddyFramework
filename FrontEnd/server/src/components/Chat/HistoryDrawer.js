@@ -15,28 +15,33 @@ import ChatIcon from '@mui/icons-material/Chat';
 const StyledBox = styled(Box)(({ theme, hovered, currentIndex, itemIndex }) => ({
   display: 'flex',
   alignItems: 'center',
-  width: '100%', // Ensure full width
-  color:  hovered ? "darkblue" : itemIndex === currentIndex ? "white" : 'inherit',
-  backgroundColor: hovered ? "lightblue" : itemIndex === currentIndex ? "transparent" : 'inherit',
-  overflow: 'hidden', // Hide overflow
+  width: '100%',
+  color:  hovered ? theme.palette.secondary.main : itemIndex === currentIndex ? "white" : 'inherit',
+  backgroundColor: hovered ? "darkred" : itemIndex === currentIndex ? "transparent" : 'inherit',
+  overflow: 'hidden',
 }));
 
-const StyledButton = styled(Button)({
-  backgroundColor: '#1976d2', // default color
+const StyledButton = styled(Button)(({ theme }) => ({
+  backgroundColor: theme.palette.secondary.main, 
   width: '90%',
   alignContent: 'center',
   color: 'white',
   '&:hover': {
-    backgroundColor: '#1565c0', // darker shade for hover state
+    backgroundColor: theme.palette.secondary.dark,
   },
-  margin: '8px',  // Add some margin around
-});
+  margin: '8px',
+}));
 
 function HistoryDrawer() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [hoveredItemIndex, setHoveredItemIndex] = useState(null);
   const [selectedItemIndex, setSelectedItemIndex] = useState(null);
   const { setChatHistory, setCurrentChatIndex, currentChatIndex, chatHistory, newChat, loadHistory,handleShare, isTemporary } = useChat();
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);  
+  };
 
   const handleClick = (event, index) => {
     event.preventDefault();
@@ -66,15 +71,21 @@ function HistoryDrawer() {
   };
 
   return (
+    <>
+    <IconButton onClick={toggleDrawer} sx={{ mr: 2 }}>
+        {drawerOpen ? <ChatIcon /> : <ChatIcon />} 
+      </IconButton>
     <Drawer
-      variant="permanent"
+       open={drawerOpen}
+        onClose={toggleDrawer}
+        variant="temporary"
       sx={{
         width: '240px', // Adjusted width for consistency
         flexShrink: 0,
         '& .MuiDrawer-paper': {
           width: '240px', // Adjusted width for consistency
           boxSizing: 'border-box',
-          backgroundColor: '#14a4ff ',  // Adjusted Whole background color
+          backgroundColor: 'primary.main',  // Adjusted Whole background color
         },
       }}
     >
@@ -121,6 +132,7 @@ function HistoryDrawer() {
         <MenuItem onClick={() => handleMenuAction('delete')}>Delete chat</MenuItem>
       </Menu>
     </Drawer>
+    </>
   );
 }
 

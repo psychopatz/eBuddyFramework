@@ -144,8 +144,9 @@ const ChatModule = () => {
             />}
             {isUnfinished && <Button sx={{
                 position: 'fixed',
-                bottom: 0,
+                bottom: 50,
                 left: '45%', 
+                color: 'white'
                 }} onClick={()=>resumeChat()}>Resume Chat</Button>}
             
             </Box>
