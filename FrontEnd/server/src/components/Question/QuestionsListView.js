@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import {
   List, ListItem as MuiListItem, ListItemAvatar, Avatar, ListItemText,
-  IconButton, Menu, MenuItem
+  IconButton, Menu, MenuItem, FormControl, InputLabel, Select
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { QuestionContext } from './QuestionContext';
@@ -25,6 +25,7 @@ const ListItem = styled(MuiListItem)(({ theme, selected }) => ({
 
 function QuestionsListView({ listHeight }) {
   const { items, handleListItemClick, handleUpdate, handleDelete, currentId, setCurrentId } = useContext(QuestionContext);
+  const [filter, setFilter] = useState('unanswered'); 
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);  // To control the menu's position
     // To track the current item ID for menu operations
@@ -48,11 +49,32 @@ function QuestionsListView({ listHeight }) {
     handleListItemClick(id);
   };
 
+  const sortedItems = [...items].sort((a, b) => b.id - a.id);
+
 
   return (
-    <ScrollableContainer height={listHeight}>
+    <ScrollableContainer height={listHeight} >
+      
+      <FormControl fullWidth>
+        <InputLabel id="filter-label" >Filter Questions</InputLabel>
+        <Select
+          labelId="filter-label"
+          value={filter}
+          label="Filter Questions"
+          onChange={(e) => setFilter(e.target.value)}
+          style={{ marginBottom: '20px' }}
+        >
+          <MenuItem value="all">All</MenuItem>
+          <MenuItem value="answered">Answered</MenuItem>
+          <MenuItem value="unanswered">Unanswered</MenuItem>
+        </Select>
+      </FormControl>
       <List>
-        {items.map(item => (
+        {sortedItems.filter(item => 
+          filter === 'all' || 
+          (filter === 'answered' && item.isResolved) || 
+          (filter === 'unanswered' && !item.isResolved)
+          ).map(item => (
           <ListItem
             key={item.id}
             selected={selectedItemId === item.id}

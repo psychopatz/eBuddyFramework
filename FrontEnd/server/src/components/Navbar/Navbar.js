@@ -46,6 +46,7 @@ function NavBar() {
         { label: 'Dashboard', path: '/admin' },
         { label: 'Manage Questions', path: '/admin/manage-questions' },
         { label: 'Manage Datasets', path: '/admin/train-ai' },
+        { label: 'Manage Prompts', path: '/admin/manage-prompts'},
         { label: 'Test Chatbot', path: '/admin/test-chatbot' },
     ];
 

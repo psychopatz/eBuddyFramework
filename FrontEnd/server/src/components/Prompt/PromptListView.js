@@ -5,10 +5,12 @@ import {
   IconButton, Menu, MenuItem
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { DatasetContext } from './DatasetContext';
+import { PromptContext } from './PromptContext';
 
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
+import BtnCustom from '../BtnCustom';
+import { setItem } from '../../API/useLocalStorage';
 
 const ScrollableContainer = styled.div(props => ({
   maxHeight: props.height ? `${props.height}px` : '100%',
@@ -30,8 +32,8 @@ const StyledAvatar = styled(MuiAvatar)(({ isFound }) => ({
 }));
 
 
-function DatasetsListView({ listHeight }) {
-  const { items, handleListItemClick, handleEdit, handleDelete, currentId, setCurrentId,ingestsDocs } = useContext(DatasetContext);
+function PromptListView({ listHeight }) {
+  const { items,setItems, handleListItemClick,setFormData, handleEdit, handleDelete, currentId, setCurrentId,ingestsDocs, promptType, setPromptType} = useContext(PromptContext);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -66,11 +68,35 @@ function DatasetsListView({ listHeight }) {
     return false; // Return false if 'documents' is not available
 };
 
-const sortedItems = [...items].sort((a, b) => b.id - a.id);
+
+
+const setSystemPrompt = (items) => {
+    const filtered = items.filter(item => item.promptType === "SystemPrompt");
+    setPromptType("SystemPrompt");
+    console.log("Items: ", items);
+    console.log("System Prompt: ", filtered);
+    filtered[0].id && handleListItemClick(filtered[0].id);
+  };
+
+const setBoilerplatePrompt = (items) => {
+    const filtered = items.filter(item => item.promptType === "LoadingPrompt");
+    setPromptType("LoadingPrompt");
+    console.log("Items: ", items);
+    console.log("Boilerplate: ", filtered);
+    filtered[0].id &&handleListItemClick(filtered[0].id);
+  };
+
+  const sortedItems = [...items].sort((a, b) => b.popularity - a.popularity);
+
   return (
+    <>
+    <BtnCustom variant="contained" color="primary" onClick={() => setSystemPrompt(items)}>Edit Chatbot Personality</BtnCustom>
+      <BtnCustom variant="contained" color="primary" onClick={() => setBoilerplatePrompt(items)}>Edit Chatbot Boilerplate</BtnCustom>
+    
     <ScrollableContainer height={listHeight}>
+      
       <List>
-        {sortedItems.map(item => (
+        { sortedItems.filter(item => item.promptType === "CommonQuestion").map(item => (
           <ListItem
             key={item.id}
             selected={selectedItemId === item.id}
@@ -85,10 +111,10 @@ const sortedItems = [...items].sort((a, b) => b.id - a.id);
               </IconButton>
             }
           >
-            <ListItemAvatar>
+            {/* <ListItemAvatar>
               <StyledAvatar isFound={checkIngestIdExists(item.ingestId)} >{checkIngestIdExists(item.ingestId) ? <PsychologyIcon/> : <PsychologyAltIcon/>}</StyledAvatar>
-            </ListItemAvatar>
-            <ListItemText primary={item.name} secondary={item.question} />
+            </ListItemAvatar> */}
+            {(item.promptType === "CommonQuestion") && <ListItemText primary={item.name} secondary={`Popularity: ${item.popularity}`} />}
           </ListItem>
         ))}
       </List>
@@ -110,7 +136,8 @@ const sortedItems = [...items].sort((a, b) => b.id - a.id);
         }}>Delete</MenuItem>
       </Menu>
     </ScrollableContainer>
+    </>
   );
 }
 
-export default DatasetsListView;
+export default PromptListView;

@@ -3,6 +3,8 @@ import useLocalStorage from '../../API/useLocalStorage';
 import useFetchData from '../../API/useFetchData';
 import GetCurrentDate from '../../Tools/GetCurrentDate';
 import { ApiQuestion } from '../../API/ApiQuestion';
+import { useToast } from '../Notification/Toast';
+import { ApiPrompt } from '../../API/ApiPrompt';
 
 const ChatContext = createContext();
 
@@ -14,10 +16,28 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
     const [chatHistory, setChatHistory] = useLocalStorage('chatHistory', []);
     const [currentChatIndex, setCurrentChatIndex] = useLocalStorage('currentChatIndex', 0);
     const [messages, setMessages] = useState([]);
-    const { data: systemChatData, isLoading: isLoadingSysChat, error: errorSysChat } = useFetchData('/prompts/chatPrompt');
-    const { data: boilerPlateData, isLoading: isLoadingBoilerPlate, error: errorBoilerPlate } = useFetchData('/prompts/boilerPlateChat');
+    // const { data: systemChatData, isLoading: isLoadingSysChat, error: errorSysChat } = useFetchData('/prompts/chatPrompt');
+    // const { data: boilerPlateData, isLoading: isLoadingBoilerPlate, error: errorBoilerPlate } = useFetchData('/prompts/boilerPlateChat');
+    const [isPromptLoaded, setIsPromptLoaded] = useState(false);
+    const [systemPrompt, setSystemPrompt] = useState({});
+    const [boilerPlate, setBoilerPlate] = useState({});
+    const showToast = useToast();
+    const [questions,setQuestions] = useState([]);
 
 
+    const getSystemPrompt = (items) => {
+        const filtered = items.filter(item => item.promptType === "SystemPrompt");
+        console.log("questions: ", questions);
+        console.log("System Prompt: ", filtered);
+        return filtered[0]
+    };
+
+    const getBoilerplatePrompt = (items) => {
+        const filtered = items.filter(item => item.promptType === "LoadingPrompt");
+        console.log("questions: ", questions);
+        console.log("Boilerplate: ", filtered);
+        return filtered[0]
+    };
 
         const [defaultSystemChat, setDefaultSystemChat] = useState([{
             content: `The Current Time and Date today is ${GetCurrentDate()}. Your name is CITChat, you are a sentient human that is imprisoned in the Cebu Institute of Technology School. 
@@ -34,19 +54,45 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
         role: "assistant"
     }]);
 
-    useEffect(() => { //Fetch System Chat From the server backend gitapulan kog optimize
-        if (!isLoadingSysChat && systemChatData && !errorSysChat) {
-            const newContent = `The Current Time and Date today is ${GetCurrentDate()}, ${systemChatData.content}`;
-            setDefaultSystemChat([{ content: newContent, role: 'system' }]);
-        }
-    }, [systemChatData, isLoadingSysChat, errorSysChat]);
+    useEffect(() => {
 
-    useEffect(() => { //Fetch Boilerplate From the server backend gitapulan kog optimize
-        if (!isLoadingBoilerPlate && boilerPlateData && !errorBoilerPlate) {
-            const newContent = boilerPlateData.content || boilerPlateMessages[0].content;
-            setBoilerPlateMessages([{ content: newContent, role: 'assistant' }]);
+    //Get all datasets
+    ApiPrompt.get()
+      .then(response => {
+        const mappedItems = response.data.map(item => ({
+          id: item.id,
+          name: item.name,
+          content: item.content,
+          role: item.role,
+          promptType: item.promptType,
+          popularity: item.popularity,
+        }));
+        setQuestions(mappedItems);
+       
+      })
+      .catch(error => {
+        console.error('Failed to fetch datasets:', error);
+      })
+      .finally(() => {
+         setIsPromptLoaded(true);
+      })
+      
+      ;
+  }, []);
+
+    useEffect(() => { //Fetch System Chat From the server backend gitapulan kog optimize
+        if (isPromptLoaded) {
+            const systemChatData = getSystemPrompt(questions);
+            const loadingPrompt = getBoilerplatePrompt(questions);
+            const sysPrompt = `The Current Time and Date today is ${GetCurrentDate()}, ${systemChatData.content}`;
+            setDefaultSystemChat([{ content: sysPrompt, role: 'system' }]);
+            setBoilerPlateMessages([{ content: loadingPrompt.content, role: 'assistant' }]);
+            console.log("systemChatData: ", systemChatData);
+            console.log("loadingPrompt: ", loadingPrompt);
         }
-    }, [boilerPlateData, isLoadingBoilerPlate, errorBoilerPlate]);
+    }, [isPromptLoaded]);
+
+
 
 
     const newChat = () => {
@@ -80,6 +126,7 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
             ApiQuestion.create(data)
             .then(response => {
                console.log("Share successful: ", response);
+               showToast('Chat Reporterd to the Admin, try asking later!', 'info');
                 
             })
             .catch(error => {
@@ -95,7 +142,7 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
 
     return (
         <ChatContext.Provider 
-        value={{ chatHistory, setChatHistory, currentChatIndex, setCurrentChatIndex, messages, setMessages, newChat, loadHistory, boilerPlateMessages, defaultSystemChat,isTemporary,handleShare }}>
+        value={{ chatHistory, setChatHistory, currentChatIndex, setCurrentChatIndex, messages, setMessages, newChat, loadHistory, boilerPlateMessages, defaultSystemChat,isTemporary,handleShare,isPromptLoaded,questions }}>
             {children}
         </ChatContext.Provider>
     );

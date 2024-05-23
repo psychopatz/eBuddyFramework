@@ -2,14 +2,20 @@ import React, { useState, useEffect } from 'react';
 import ChatBubble from './ChatBubble';
 import InputBox from '../InputBox';
 import useChatCompletion from '../../API/useChatCompletion';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useChat } from './ChatContext';
+import ToggleableBox from '../Notification/ToggleableBox';
+import theme from '../../theme';
+import Carousel from '../Notification/Carousel';
+import { ApiPrompt } from '../../API/ApiPrompt';
+
+
 const ChatModule = () => {
     const [shouldFetch, setShouldFetch] = useState(false);
     const [inputText, setInputText] = useState('');
 
     const { fetchData, data, isLoading, error, setMessages: updateApiMessages } = useChatCompletion();
-    const { chatHistory, currentChatIndex, setChatHistory,messages,setMessages,boilerPlateMessages,defaultSystemChat,handleShare } = useChat();
+    const { chatHistory, currentChatIndex, setChatHistory,messages,setMessages,boilerPlateMessages,defaultSystemChat,handleShare,isTemporary,questions,isPromptLoaded } = useChat();
     const [isUnfinished, setIsUnfinished] = useState(false);
  
     const updateMessageInHistory = (index, newMessage) => {
@@ -64,6 +70,7 @@ const ChatModule = () => {
        if(data && data.choices[0].message.content !== "" && !isLoading) {
             let { content, role } = data.choices[0].message;
             console.log("Server Response: ", data.choices);
+            console.log("Docs Source: ", data.choices[0].sources);
             
             // Check if the content includes the "%notLearned%" string Send the content to the shared
             if (content.includes("%notLearned%")) {
@@ -118,12 +125,48 @@ const ChatModule = () => {
         setInputText('');
     };
 
+     const handleItemClick = async (item) => {
+        console.log('Clicked item ID:', item.content);
+        setInputText(item.content);
+        handleSubmit(item.content);
+        try {
+            await ApiPrompt.incrementPopularity(item.id);
+            } catch (error) {
+            console.error('Error incrementing popularity:', error);
+            }
+  };
+    const sortToPopular = (items) => {
+        const sortedItems = [...items].sort((a, b) => b.popularity - a.popularity);
+        return sortedItems;
+    }
+
 
 
     return (
         <>
 
-            <Box sx={{ paddingBottom: '100px', overflow: 'auto'}}>
+            <Box sx={{ 
+                paddingBottom: '100px', 
+                overflow: 'auto',
+                width: 'auto'
+            
+        }}>
+                    {isPromptLoaded && messages.length === 0 && <Box sx={{
+                        position: 'fixed',
+                        top: '50%',  // Adjust to place the carousel vertically center
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '80%',
+                        zIndex: 10  // Ensures it stays above other content
+                    }}>
+                        <img src="/banner.png" alt="Logo" style={{ 
+                                display: 'block',  // Makes the image block level to take width properties
+                                margin: '0 auto',  // Automatically adjust margin to center the image
+                                width: '130px', 
+                                marginBottom: '100px' 
+                            }}  />
+                        <Carousel items={sortToPopular(questions)} onItemClick={handleItemClick} />
+                    </Box>}
                 
                 {messages.map((message, index) => (
                 <>
@@ -148,6 +191,38 @@ const ChatModule = () => {
                 left: '45%', 
                 color: 'white'
                 }} onClick={()=>resumeChat()}>Resume Chat</Button>}
+
+            <Box sx={{
+                    zIndex: 4930,
+                    position: 'fixed',  // Corrected from 'fix' to 'fixed'
+                    bottom: '1%',  // Adjusted for consistency
+                    width: 'auto',
+                    overflow: 'true',
+                }}>
+                    {(isTemporary && data) && (
+                        <ToggleableBox title="Ingested Source">
+                            {data.choices[0].sources.map((source, index) => (
+                            <div key={index}>
+                                <Typography>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</Typography>
+                                <Typography variant="h6">Dataset File Name:</Typography>
+                                <Typography>{source.document.doc_metadata.file_name}</Typography>
+
+                                <Typography variant="h6">Ingested Document ID:</Typography>
+                                <Typography>{source.document.doc_id}</Typography>
+                                        
+                                <Typography variant="h6">Part Where AI Read the Text:</Typography>
+                                <Typography>{source.text}</Typography>
+
+                                <Typography variant="h6">Confidence Score:</Typography>
+                                <Typography>{source.score}</Typography>
+                                <Typography>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</Typography>
+                                
+                            </div>
+                            ))}
+                        </ToggleableBox>
+                        )}
+
+                </Box>
             
             </Box>
            

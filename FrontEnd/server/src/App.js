@@ -16,12 +16,14 @@ import NavBar from './components/Navbar/Navbar';
 import AccountPage from './components/Profile/AccountPage';
 import LandingPage from './User/LandingPage';
 import DocumentEditor from './Admin/DocumentEditor';
+import ToastProvider from './components/Notification/Toast';
+import ManagePromptsPage from './Admin/ManagePromptsPage';
 
 
 // Navigation component that includes NavBar based on current path
 function Navigation() {
   const location = useLocation();
-  const showNavBar = ['/admin/','/admin', '/admin/manage-questions', '/admin/train-ai', '/admin/test-chatbot', '/admin/account'].includes(location.pathname);
+  const showNavBar = ['/admin/','/admin', '/admin/manage-questions', '/admin/train-ai', '/admin/test-chatbot', '/admin/account','/admin/manage-prompts'].includes(location.pathname);
   
   return showNavBar ? <NavBar /> : null;
 }
@@ -29,6 +31,7 @@ function Navigation() {
 function App() {
   return (
     <ThemeProvider theme={theme}> 
+    <ToastProvider>
       <CssBaseline /> 
     <BrowserRouter>
       <Navigation /> 
@@ -41,6 +44,7 @@ function App() {
         <Route path='/register' element={<Register />} />
         <Route path="/admin" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/admin/manage-questions" element={<ProtectedRoute><ViewQuestionsPage /></ProtectedRoute>} />
+        <Route path="/admin/manage-prompts" element={<ProtectedRoute><ManagePromptsPage /></ProtectedRoute>} />
         <Route path="/admin/train-ai" element={<ProtectedRoute><ManageDatasetsPage /></ProtectedRoute>} />
         <Route path="/admin/test-chatbot" element={<ProtectedRoute><AdminChatPage /></ProtectedRoute>} />
         <Route path='/admin/account' element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
@@ -50,6 +54,7 @@ function App() {
 
       </main>
     </BrowserRouter>
+    </ToastProvider>
     </ThemeProvider>
   );
 }

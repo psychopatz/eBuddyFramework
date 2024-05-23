@@ -28,9 +28,11 @@ class Dataset(Base):
     
 class Prompt(Base):
     __tablename__ = 'prompts'
-    id = Column(String(50), primary_key=True, index=True)  
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False)
     content = Column(Text, nullable=False)
     role = Column(String(255), nullable=False)
+    promptType = Column(String(255), nullable=False)
     popularity = Column(Integer, default=0)
 
 
@@ -39,6 +41,7 @@ class Question(Base):
     __tablename__ = 'questions'
     id = Column(Integer, primary_key=True, index=True)
     summary = Column(Text, nullable=False)
+    tags = Column(String(255), nullable=True)
     dateCreated = Column(DateTime(timezone=True), server_default=func.now())
     isResolved = Column(Boolean, default=False)
     chatHistory = Column(JSON, nullable=False)  # Using JSON to store the list of chat objects

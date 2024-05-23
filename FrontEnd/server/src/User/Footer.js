@@ -18,7 +18,7 @@ const Footer = () => {
             }}
         >
             <Typography variant="h6" color="white" sx={{fontSize: '80%'}}>
-                CITChat can make mistakes. Please Check important info and Report.
+                CITChat can make some mistakes. Please report it using by clicking the Report Button
             </Typography>
         </Box>
     );

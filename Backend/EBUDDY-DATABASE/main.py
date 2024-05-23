@@ -223,20 +223,38 @@ async def delete_dataset(id: int, db:db_dependency):
 
 # Pydantic Model for Prompt
 class PromptBase(BaseModel):
+    id: int
+    name: str
     content: str
     role: str
+    promptType: str
     popularity: int
 
 class SystemPromptCreate(BaseModel):
-    id: str
+    name: str
     content: str
+    promptType: str
     role: str
 
 
 class PromptUpdate(BaseModel):
+    name: Optional[str] = None
     content: Optional[str] = None
     role: Optional[str] = None
+    promptType: Optional[str] = None
     popularity: Optional[int] = None
+    
+
+class PromptTypeQuery(BaseModel):
+    promptType: str
+
+@app.get("/prompts/type/", response_model=List[PromptBase], status_code=status.HTTP_200_OK)
+async def get_prompts_by_type(prompt_type: PromptTypeQuery = Depends(), db: Session = Depends(get_db)):
+    # Fetch prompts from the database based on the prompt type
+    prompts = db.query(Prompt).filter(Prompt.promptType == prompt_type.promptType).all()
+    if not prompts:
+        raise HTTPException(status_code=404, detail="No prompts found for the specified type")
+    return prompts
     
 @app.get("/prompts/all", response_model=List[PromptBase], status_code=status.HTTP_200_OK)
 async def get_all_prompts(db: Session = Depends(get_db)):
@@ -245,14 +263,10 @@ async def get_all_prompts(db: Session = Depends(get_db)):
     return prompts
 
 
-@app.post("/prompts/", status_code=status.HTTP_201_CREATED)
+
+@app.post("/prompts/create", status_code=status.HTTP_201_CREATED)
 def create_system_prompt(prompt: SystemPromptCreate, db: Session = Depends(get_db)):
     # Check if a Prompt with the same id already exists
-    existing_prompt = db.query(Prompt).filter(Prompt.id == prompt.id).first()
-    if existing_prompt:
-        raise HTTPException(status_code=400, detail="A system prompt with the given ID already exists")
-
-    # Create a new Prompt entry
     db_prompt = Prompt(**prompt.dict())
     db.add(db_prompt)
     db.commit()
@@ -260,7 +274,7 @@ def create_system_prompt(prompt: SystemPromptCreate, db: Session = Depends(get_d
     return db_prompt
 
 @app.post("/prompts/{id}/increment-popularity", status_code=status.HTTP_200_OK)
-async def increment_prompt_popularity(id: str, db: Session = Depends(get_db)):
+async def increment_prompt_popularity(id: int, db: Session = Depends(get_db)):
     # Retrieve the prompt from the database
     prompt = db.query(Prompt).filter(Prompt.id == id).first()
     if prompt is None:
@@ -273,7 +287,7 @@ async def increment_prompt_popularity(id: str, db: Session = Depends(get_db)):
     return {"id": prompt.id, "message": f"Increased popularity to {prompt.popularity}"}
 
 @app.post("/prompts/{id}/reset-popularity", status_code=status.HTTP_200_OK)
-async def reset_prompt_popularity(id: str, db: Session = Depends(get_db)):
+async def reset_prompt_popularity(id: int, db: Session = Depends(get_db)):
     # Retrieve the prompt from the database
     prompt = db.query(Prompt).filter(Prompt.id == id).first()
     if prompt is None:
@@ -287,7 +301,7 @@ async def reset_prompt_popularity(id: str, db: Session = Depends(get_db)):
 
 
 @app.get("/prompts/{id}", status_code=status.HTTP_200_OK)
-def read_system_prompt(id: str, db: Session = Depends(get_db)):
+def read_system_prompt(id: int, db: Session = Depends(get_db)):
     prompt = db.query(Prompt).filter(Prompt.id == id).first()
     if prompt is None:
         raise HTTPException(status_code=404, detail="System prompt not found")
@@ -295,7 +309,7 @@ def read_system_prompt(id: str, db: Session = Depends(get_db)):
 
 
 @app.put("/prompts/{id}", status_code=status.HTTP_200_OK)
-def update_system_prompt(id: str, prompt_data: PromptUpdate, db: Session = Depends(get_db)):
+def update_system_prompt(id: int, prompt_data: PromptUpdate, db: Session = Depends(get_db)):
     db_prompt = db.query(Prompt).filter(Prompt.id == id).first()
     if db_prompt is None:
         raise HTTPException(status_code=404, detail="System prompt not found")
@@ -307,7 +321,7 @@ def update_system_prompt(id: str, prompt_data: PromptUpdate, db: Session = Depen
     return {"message": "System prompt updated successfully"}
 
 @app.delete("/prompts/{id}", status_code=status.HTTP_200_OK)
-def delete_system_prompt(id: str, db: Session = Depends(get_db)):
+def delete_system_prompt(id: int, db: Session = Depends(get_db)):
     db_prompt = db.query(Prompt).filter(Prompt.id == id).first()
     if db_prompt is None:
         raise HTTPException(status_code=404, detail="System prompt not found")
@@ -322,6 +336,7 @@ def delete_system_prompt(id: str, db: Session = Depends(get_db)):
 # Pydantic Model for Question
 class QuestionBase(BaseModel):
     summary: str
+    tags: str
     isResolved: bool = False
     chatHistory: List[dict]  # List of objects with 'context' and 'role'
     
@@ -331,6 +346,7 @@ class QuestionCreate(QuestionBase):
 
 class QuestionUpdate(BaseModel):
     summary: Optional[str] = None
+    tags: Optional[str] = None
     isResolved: Optional[bool] = None
     chatHistory: Optional[List[dict]] = None
     datasetID: Optional[str] = ""
@@ -338,6 +354,7 @@ class QuestionUpdate(BaseModel):
 class QuestionDisplay(BaseModel):
     id: int
     summary: str
+    tags: str
     dateCreated: datetime
     isResolved: bool
     chatHistory: List[dict]
@@ -557,7 +574,13 @@ def save_photo_metadata(db: Session, filename: str, url: str) -> Photo:
 
 @app.post("/photos/upload/")
 async def upload_photo(file: UploadFile):
-    filename = file.filename
+    
+    # Generate a unique timestamp
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    
+    # Append the timestamp to the original filename
+    filename = f"{timestamp}_{file.filename}"
+    
     file_location = "uploaded_files"  # Folder where files will be stored
     if not os.path.exists(file_location):
         os.makedirs(file_location)

@@ -9,7 +9,7 @@ export default function PieModule({answers = 0, questions = 0, errors = 0, width
     switch (data.label) {
         case 'Answers':
             console.log('Navigating to /admin/');
-            navigate('/admin/');
+            navigate('/admin');
             break;
         case 'Questions':
             console.log('Navigating to /admin/manage-questions');

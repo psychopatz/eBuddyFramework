@@ -13,6 +13,7 @@ function InputField({ label, name, type, autoComplete, required, autoFocus }) {
       autoComplete={autoComplete}
       type={type}
       autoFocus={autoFocus}
+      
     />
   );
 }

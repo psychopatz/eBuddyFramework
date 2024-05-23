@@ -14,7 +14,7 @@ const theme = createTheme({
       main: '#ff0000',  // Your error color
     },
     background: {
-      default: '#fff',  // Your background color
+      default: '#FADD90',  // Your background color
     },
   },
   components: {
@@ -30,7 +30,7 @@ const theme = createTheme({
           },
           '& .MuiOutlinedInput-root': {
             '& input': {
-              color: 'white',  // Changes the text color
+              color: 'black',  // Set text color to black for all input fields
             },
             '& fieldset': {
               borderColor: '#a83636',  // Default border color
@@ -43,15 +43,18 @@ const theme = createTheme({
             },
             '& .MuiInputLabel-root': {
               color: 'rgba(255, 255, 255, 0.7)', // Changes the label color
-            },
-            '& .MuiInputLabel-root.Mui-focused': {
-              color: '#830404', // Keeps label color when focused
+              top: '0px', // Adjust label position for alignment
+              '&.Mui-focused': {
+                color: '#830404', // Keeps label color when focused
+                top: '-6px' // Adjust label position for focus state
+              }
             },
             '& .MuiInputBase-input::placeholder': {
               color: 'white',  // Sets placeholder text color to white
-              opacity: 1  // Ensures full opacity for placeholder text
+              opacity: 0.8  // Ensures full opacity for placeholder text
             }
           },
+          
         }
       }
     },
@@ -67,6 +70,7 @@ const theme = createTheme({
       }
     }
   },
+  
   typography: {
     fontFamily: 'Arial, sans-serif',  // Example: Set a default font family
     button: {

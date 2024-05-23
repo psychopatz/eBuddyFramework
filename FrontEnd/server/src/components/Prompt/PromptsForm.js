@@ -5,8 +5,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import BtnCustom from '../BtnCustom';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
-import { ApiIngest } from '../../API/ApiIngest';
-import DelayedReload from '../../Tools/DelayedReload';
+import {PromptContext} from './PromptContext';
 
 const StyledForm = styled(Box)(({ theme }) => ({
   maxWidth: "100%",
@@ -63,43 +62,8 @@ const btnStyles = {
   }
 };
 
-const DatasetsForm = () => {
-  // const { isEditing, setIsEditing,isCreating,handleDelete, handleUpdate } = useContext(DatasetContext);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isCreating, setIsCreating] = useState(true);
-    const [formData, setFormData] = useState({
-    id: 0,
-    name: '',
-    question: '',
-    answer: '',
-    context: '',
-    ingestId: ''
-  });
-    const delayedReload = DelayedReload({ delay: 3000 });
-
-    const handleCreate = () => {
-    setIsCreating(true);
-    const data = {
-      "name": formData.name,
-      "Question": formData.question,
-      "Answer": formData.answer,
-      "Context": formData.context
-    };
-    console.log('Create action initiated:', data);
-    ApiIngest.create(data)
-      .then(response => {
-        setIsCreating(false);
-        setFormData({ id: 0, name: '', question: '', answer: '', context: '',  }); // Reset form data
-        
-      })
-      .catch(error => {
-        console.error('Failed to create dataset:', error);
-        setIsCreating(false);
-      }).finally(() => {
-        delayedReload.triggerReload();
-      })
-      ;
-  };
+const PromptsForm = () => {
+  const { formData, setFormData, isEditing, setIsEditing,isCreating,handleDelete, handleCreate, handleUpdate, promptType } = useContext(PromptContext);
   
 const isFormDataEmpty = () => {
     return !formData.name && !formData.question && !formData.answer && !formData.context;
@@ -110,7 +74,6 @@ const isFormDataEmpty = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -118,7 +81,11 @@ const isFormDataEmpty = () => {
      if (isCreating) {
         console.log('Create action initiated');
         handleCreate(); // Call create specific logic
-    } 
+    } else if (isEditing) {
+        console.log('Update action initiated');
+        handleUpdate(formData.id);
+        // handleUpdateSubmit(); // Call update specific logic
+  }
   console.log('Form Data:', formData);
     setIsEditing(false);
   };
@@ -129,6 +96,7 @@ const isFormDataEmpty = () => {
     console.log('Update action initiated');
     setIsEditing(true);
   };
+
 
   return (
     <StyledForm
@@ -142,63 +110,61 @@ const isFormDataEmpty = () => {
         label="Name"
         name="name"
         required
-        disabled={!isEditing && !isCreating}
+        disabled={!isEditing && !isCreating }
         variant="outlined"
         value={formData.name}
         onChange={handleChange}
+        InputProps={{
+          style: { color: 'black' } 
+        }}
       />
 
       <StyledTextField
-        label="Question"
-        name="question"
+        label="Content"
+        name="content"
+        sx={{color: 'black'}}
         multiline
         required
         disabled={!isEditing && !isCreating}
         variant="outlined"
-        value={formData.question}
+        value={formData.content}
         onChange={handleChange}
         InputProps={{
           inputComponent: AutoExpandTextField,
+          style: { color: 'black' } ,
           inputProps: {
             minRows: 2,
           }
         }}
       />
 
-      <StyledTextField
-        label="Answer"
-        name="answer"
-        multiline
+     <StyledTextField
+        label="Popularity"
+        name="popularity"
         required
         disabled={!isEditing && !isCreating}
         variant="outlined"
-        value={formData.answer}
-        onChange={handleChange}
+        value={formData.popularity}
         InputProps={{
-          inputComponent: AutoExpandTextField,
+          style: { color: 'black' },
           inputProps: {
-            minRows: 2,
+            min: 0, // Optional: specify minimum value
+            step: 1  // Ensure stepping by 1 to avoid decimals
           }
         }}
-      />
+        onChange={(event) => {
+          // Allow only integer values
+          const value = event.target.value;
+          setFormData(prev => ({
+            ...prev,
+            popularity: value === "" ? "" : parseInt(value)
+          }));}}
+        type="number"
 
-      <StyledTextField
-        label="Context"
-        name="context"
-        multiline
-        required
+        
+/>
 
-        disabled={!isEditing && !isCreating}
-        variant="outlined"
-        value={formData.context}
-        onChange={handleChange}
-        InputProps={{
-          inputComponent: AutoExpandTextField,
-          inputProps: {
-            minRows: 2,
-          }
-        }}
-      />
+
 
       <ButtonContainer>
         {formData.name && !isCreating && !isEditing && <BtnCustom onClick={() => handleEditMode()} sx={btnStyles.update}>Edit</BtnCustom>}
@@ -207,10 +173,11 @@ const isFormDataEmpty = () => {
           {isFormDataEmpty() && isCreating && isEditing ? "Create" : "Submit"}
         </BtnCustom>
       )}
+        {formData.name && !isCreating && !isEditing && <BtnCustom onClick={() => handleDelete(formData.id)} sx={btnStyles.delete}>Delete</BtnCustom>}
       </ButtonContainer>
-      {formData.ingestId && <Typography variant="subtitle"><b>IngestID</b>: {formData.ingestId}</Typography>}
+      {formData.promptType && <Typography variant="subtitle"><b>Prompt Type</b>: {formData.promptType}</Typography>}
     </StyledForm>
   );
 }
 
-export default DatasetsForm;
+export default PromptsForm;

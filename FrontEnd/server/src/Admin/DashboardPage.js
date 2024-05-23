@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import useLocalStorage from "../API/useLocalStorage.js";
 import GetGreeting from "../Tools/GetGreeting.js";
 import PieModule from "../components/Dashboard/PieModule.js";
@@ -6,6 +6,41 @@ import { useEffect, useState } from "react";
 import { ApiDataset } from "../API/ApiDataset.js";
 import { ApiIngest } from "../API/ApiIngest.js";
 import { ApiQuestion } from "../API/ApiQuestion.js";
+import styled from "@emotion/styled";
+import { Canvas } from "@react-three/fiber";
+import Pseudo3dImage from "../components/Image/Pseudo3dImage.js";
+
+const FullScreenWrapper = styled('div')({
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100vw',
+  height: '100vh',
+  zIndex: 1, // Ensure it's above other elements if necessary
+  backgroundColor: 'primary.main', // Optional, based on your theme or preference
+  display: 'flex', // Added to use flexbox for centering
+  alignItems: 'center', // Aligns children vertically in the center
+  justifyContent: 'center', // Aligns children horizontally in the center
+});
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  zIndex: 10, // Ensures the box is above the canvas
+  position: 'absolute', // Keep position absolute to layer it on top of the Canvas
+  top: '50%', // Set top to 50% of its parent
+  left: 0, // Align left to 0 to start from the left edge
+  transform: 'translateY(-50%)', // Adjust only vertically to center
+  width: '100%', // Set width to 100% of its parent
+  padding: theme.spacing(4), // Use theme spacing for consistent padding
+  borderRadius: theme.shape.borderRadius, // Use theme border radius
+  display: 'flex',
+  flexDirection: 'column', // Stack children vertically
+  alignItems: 'center', // Center children horizontally
+  justifyContent: 'center', // Center children vertically
+  backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent black background
+}));
+
+
+
 
 const DashboardPage = () => {
     const [adminCredentials, setAdminCredentials] = useLocalStorage('adminCredentials', {});
@@ -15,6 +50,11 @@ const DashboardPage = () => {
     const [items, setItems] = useState([]);
     const [questions, setQuestions] = useState([]);
     const [ingestsDocs, setIngestsDocs] = useState([]);
+
+    const [dataCount, setDataCount] = useState({
+      datasets: 0,
+      questions: 0,
+      ingests: 0});
 
      useEffect(() => {
 
@@ -39,7 +79,7 @@ const DashboardPage = () => {
       //Get all ingests List
       ApiIngest.list()
       .then(response => {
-        setIngestsDocs(response.data); // Assuming the response data is the array of ingests
+        setIngestsDocs(response.data.documents);
         console.log("Ingests fetched:", response.data);
       })
       .catch(err => {
@@ -50,15 +90,9 @@ const DashboardPage = () => {
       ApiQuestion.get()
         .then(response => {
           const filteredItems = response.data.filter(item => !item.isResolved);
-          const mappedItems = filteredItems.map(item => ({
-            id: item.id,
-            summary: item.summary,
-            dateCreated: item.dateCreated,
-            isResolved: item.isResolved,
-            chatHistory: item.chatHistory
-          }));
           setQuestions(filteredItems);
           console.log('Datasets fetched:', response.data);
+
         })
         .catch(error => {
           console.error('Failed to fetch datasets:', error);
@@ -69,18 +103,26 @@ const DashboardPage = () => {
   }, []);
 
     return (  
-        <>
-        <h1>Dashboard</h1>
-        <Typography>{GetGreeting()}, {firstName} {lastName}</Typography>
+        <FullScreenWrapper>
+          <StyledBox>
+            <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'white'}}>
+                {GetGreeting()}, {firstName} {lastName}
+            </Typography>
+            <PieModule answers={items.length} questions={questions.length} errors={!ingestsDocs ? 9999 : items.length - ingestsDocs.length}/>
 
-        <h2>Datasets Graph pila kabuok ang answeranan ug pila na ang naansweran nga piechart https://mui.com/x/react-charts/pie/</h2>
-        <PieModule answers={items ? items.length : 100 } questions={questions ? questions.length : 100} errors={ingestsDocs ? ingestsDocs.length - items.length : 0}/>
-        
-        <h2>List of Prompts ranked by popularity para sa chat defaults nga common questions</h2>
 
-        <h2>churva2 ngali</h2>
         
-        </>
+          </StyledBox>
+          <Canvas style={{
+                width: '100%',
+                height: '100%',
+                filter: 'brightness(90%)',
+                filter: 'blur(10px)',
+            }}>
+                <Pseudo3dImage imageUrl="/landingImage.png" depthMapUrl="/landingImage_depth.png" />
+            </Canvas>
+
+        </FullScreenWrapper>
     );
 }
  
