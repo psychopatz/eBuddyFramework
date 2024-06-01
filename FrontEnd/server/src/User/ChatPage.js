@@ -13,7 +13,7 @@ const ChatPage = () => {
         <ChatProvider>
              <Box sx={{
             display: 'flex',
-            height: '100vh',
+            height: '10%',
             flexDirection: 'row', 
         }}>
             <HistoryDrawer />

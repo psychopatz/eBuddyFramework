@@ -35,7 +35,7 @@ function App() {
       <CssBaseline /> 
     <BrowserRouter>
       <Navigation /> 
-      <main style={{ position: 'relative', flex: 1 }}>
+      <main style={{ position: 'relative', flex: 1 , overflow: 'hidden'}}>
         <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/chat" element={<ChatPage />} />

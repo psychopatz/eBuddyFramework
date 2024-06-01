@@ -146,7 +146,7 @@ const ChatModule = () => {
         <>
 
             <Box sx={{ 
-                paddingBottom: '100px', 
+                paddingBottom: '150px', 
                 overflow: 'auto',
                 width: 'auto'
             

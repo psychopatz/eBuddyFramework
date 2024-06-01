@@ -8,6 +8,7 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 import {DatasetContext} from './DatasetContext';
 import ManageCurrentImages from '../Image/ManageImages';
 import { findImageUrls } from '../Image/findImageUrls';
+import { uploadFile } from '../../API/ApiUpload';
 
 const StyledForm = styled(Box)(({ theme }) => ({
   maxWidth: "100%",
@@ -65,7 +66,7 @@ const btnStyles = {
 };
 
 const DatasetsForm = () => {
-  const { formData, setFormData, isEditing, setIsEditing,isCreating,handleDelete, handleCreate, handleUpdate } = useContext(DatasetContext);
+  const { formData, setFormData, isEditing, setIsEditing,isCreating,handleDelete, handleCreate, handleUpdate,showToast } = useContext(DatasetContext);
   
 const isFormDataEmpty = () => {
     return !formData.name && !formData.question && !formData.answer && !formData.context;
@@ -98,6 +99,8 @@ const isFormDataEmpty = () => {
     console.log('Update action initiated');
     setIsEditing(true);
   };
+
+  
 
   return (
     <StyledForm
@@ -150,7 +153,12 @@ const isFormDataEmpty = () => {
           }
         }}
       />
-      <ManageCurrentImages buttonLabel="Manage Images" imageUrls={findImageUrls(formData.answer)}>
+
+      <ManageCurrentImages
+       buttonLabel="Manage Images" 
+       imageUrls={findImageUrls(formData.answer)}
+       
+       >
 
       </ManageCurrentImages>
 

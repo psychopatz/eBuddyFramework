@@ -1,10 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Drawer, Box, Button, Typography, styled, IconButton } from '@mui/material';
 import BtnCustom from '../BtnCustom';
 import DisplayImage from './DisplayImage';
 import { uploadFile } from '../../API/ApiUpload';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { useToast } from '../Notification/Toast';
 import useLocalStorage from '../../API/useLocalStorage';
+import { findImageUrls } from './findImageUrls';
+import PastePopup from '../../Tools/PastePopup';
+
+
+
 
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
   width: 'auto',
@@ -32,44 +38,67 @@ const UploadButton = styled(IconButton)(({ isLoading }) => ({
 
 function ManageCurrentImages({ buttonLabel, imageUrls, drawerWidth }) {
   const [isOpen, setIsOpen] = useState(false);
-  const showToast = useToast();
-  const fileInputRef = useRef(null);
-  const [userImages, setUserImages] = useLocalStorage('userUploadedImages', []);
   const [isLoading,setIsLoading] = useState(false)
+  const [foundLinks, setFoundLinks] = useState([])
+  const [photoLink, setPhotoLink] = useState("");
+
+  const showToast = useToast();
+   const [uploadedPhoto, setUploadedPhoto] = useLocalStorage('recentUploadedPhoto', "");
+
+
 
   const toggleDrawer = (open) => (event) => {
-    event.stopPropagation(); // Prevent parent event handlers from being triggered
+    event.stopPropagation();
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
     setIsOpen(open);
   };
 
+  useEffect(() => {
+    setFoundLinks(findImageUrls(uploadedPhoto))
+  }, [imageUrls])
+
+
+
   const handleFileChange = async (event) => {
-    console.log("INA")
-    const file = event.target.files[0];
-    if (file) {
-      try {
-        showToast('Uploading your image, please wait...', 'info');
-        const uploadedData = await uploadFile(file);
-        setUserImages([...userImages, uploadedData.filename]); // Assuming 'filename' is the key that contains the URL
-        showToast('Image uploaded successfully!', 'success');
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        showToast('Error uploading image', 'error');
-      }
-    }
-  };
+        const file = event.target.files[0];
+        console.log("file: ",file);
+        console.log("filename: ", file.name)
+        setPhotoLink("")
+        if (file) {
+            try {
+                setIsLoading(true)
+                showToast('Uploading your image, Please Wait...', 'info');
+                const uploadedData = await uploadFile(file);
+                console.log("Uploaded Data: ", uploadedData);
+                const photo = uploadedData.filename
+                console.log("Uploaded: ", photo)
+                const data = `[${file.name}](${uploadedData.url})`;
+                setUploadedPhoto([data + " "+ uploadedPhoto])
+                setPhotoLink(data)
 
+                showToast('Upload Success, now copy and paste it.', 'success');
 
+                
 
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                showToast(error, 'error');
+            }
+            finally{
+               setIsLoading(false)
+            }
+        }
+    };
 
   return (
     <div>
       <BtnCustom onClick={(e) => {
-        e.stopPropagation(); // Prevent parent event handlers from being triggered
+        e.stopPropagation();
         toggleDrawer(true)(e);
       }}>{buttonLabel}</BtnCustom>
+
       <StyledDrawer
         anchor="bottom"
         open={isOpen}
@@ -79,36 +108,22 @@ function ManageCurrentImages({ buttonLabel, imageUrls, drawerWidth }) {
         <Box
           sx={{ width: drawerWidth || 'auto' }}
           role="presentation"
-          onClick={toggleDrawer(false)}
-          onKeyDown={toggleDrawer(false)}
+
         >
           <Typography variant="h6">Current Photos</Typography>
           <ImageContainer>
-            <DisplayImage imageUrls={imageUrls} onImageClick={() => {}} />
+            <DisplayImage imageUrls={imageUrls} onImageClick={()=>{showToast("clicked", 'error')}} />
           </ImageContainer>
           <Typography variant="h6">Your Uploaded Photos</Typography>
           <ImageContainer>
-            <DisplayImage imageUrls={userImages} />
+            <DisplayImage imageUrls={foundLinks} onImageClick={()=>{showToast("clicked", 'error')}} /> 
           </ImageContainer>
-          {/* <Button
-            variant="contained"
-            component="label"
-            sx={{ mt: 2 }}
-          >
-            Upload Image
-            <input
-              type="file"
-              hidden
-              accept="image/*"
-              onChange={handleFileChange}
-              ref={fileInputRef}
-            />
-          </Button> */}
-
+          <PastePopup textData={photoLink} settextData={setPhotoLink}/>
+          
           <UploadButton isLoading={isLoading} component="label">
-                        <input type="file" disabled={isLoading}  onChange={handleFileChange} />
-
-                    </UploadButton>
+              <input type="file" disabled={isLoading} hidden onChange={handleFileChange} />
+              <PhotoCamera />
+          </UploadButton>
         </Box>
       </StyledDrawer>
     </div>

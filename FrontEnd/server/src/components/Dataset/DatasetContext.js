@@ -153,7 +153,8 @@ export const DatasetProvider = ({ children }) => {
     isCreating,
     setIsCreating,
     ingestsDocs,
-    handleUnlearn
+    handleUnlearn,
+    showToast
   };
 
   return <DatasetContext.Provider value={value}>{children}</DatasetContext.Provider>;

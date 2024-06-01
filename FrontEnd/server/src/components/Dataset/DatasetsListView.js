@@ -54,8 +54,8 @@ function DatasetsListView({ listHeight }) {
   };
 
  const checkIngestIdExists = (ingestId) => {
-    console.log("checkIngestIdExists:", ingestId);
-    console.log("ingestsDocs:", ingestsDocs);
+    // console.log("checkIngestIdExists:", ingestId);
+    // console.log("ingestsDocs:", ingestsDocs);
 
     // Check if 'documents' is available and is an array
     if (ingestsDocs && Array.isArray(ingestsDocs.documents)) {
