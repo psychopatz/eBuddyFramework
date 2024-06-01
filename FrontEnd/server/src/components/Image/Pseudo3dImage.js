@@ -35,7 +35,7 @@ extend({
     )
 });
 
-const Pseudo3dImage = ({ imageUrl, depthMapUrl }) => {
+const Pseudo3dImage = ({ imageUrl, depthMapUrl, imgScale =  1.1,amplitude = 0.02, timeSec = 0.5}) => {
     const depthMaterial = useRef();
     const texture = useTexture(imageUrl);
     const depthMap = useTexture(depthMapUrl);
@@ -48,14 +48,14 @@ const Pseudo3dImage = ({ imageUrl, depthMapUrl }) => {
         const baseScale = viewportAspect > imageAspect
             ? [viewport.width, viewport.width / imageAspect, 1]
             : [viewport.height * imageAspect, viewport.height, 1];
-        return baseScale.map(x => x * 1.1); // Increase scale by 10%
+        return baseScale.map(x => x * imgScale); // Increase scale by 10%
     }, [viewport, texture]);
 
     useFrame((state, delta) => {
         // Create a looping parallax movement
         const time = state.clock.getElapsedTime();
-        const x = Math.sin(time * 0.5) * 0.02; // Adjust speed and amplitude as necessary
-        const y = Math.cos(time * 0.5) * 0.02;
+        const x = Math.sin(time * timeSec) * amplitude; // Adjust speed and amplitude as necessary
+        const y = Math.cos(time * timeSec) * amplitude;
         depthMaterial.current.uMouse = [x, y];
     });
 

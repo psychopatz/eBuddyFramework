@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, status, BackgroundTasks,  File, UploadFile 
 from starlette.responses import HTMLResponse, FileResponse 
 import os
+import uuid
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -586,10 +587,11 @@ def save_photo_metadata(db: Session, filename: str, url: str) -> Photo:
 async def upload_photo(file: UploadFile):
     
     # Generate a unique timestamp
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    # timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    unique_id = uuid.uuid4().hex
     
     # Append the timestamp to the original filename
-    filename = f"{timestamp}_{file.filename}"
+    filename = f"{unique_id[:5]}_{file.filename[:5]}.jpg"   # f"{unique_id}_{file.filename}"
     
     file_location = "uploaded_files"  # Folder where files will be stored
     if not os.path.exists(file_location):

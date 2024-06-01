@@ -76,7 +76,7 @@ const LandingPage = () => {
                 height: '100%',
                 filter: 'brightness(90%)'
             }}>
-                <Pseudo3dImage imageUrl="/landingImage.png" depthMapUrl="/landingImage_depth.png" />
+                <Pseudo3dImage imageUrl="/landingImage.jpg" depthMapUrl="/landingImage_depth.jpg" />
             </Canvas>
         </FullScreenWrapper>
     );

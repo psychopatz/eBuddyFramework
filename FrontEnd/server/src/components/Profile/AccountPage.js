@@ -9,6 +9,8 @@ import ChangePasswordDialog from './ChangePasswordDialog';
 import BtnCustom from '../BtnCustom';
 import DelayedReload from '../../Tools/DelayedReload';
 import { useToast } from '../Notification/Toast';
+import { Canvas } from '@react-three/fiber';
+import Pseudo3dImage from '../Image/Pseudo3dImage';
 
 const ProfilePicture = styled(Avatar)(({ theme }) => ({
     width: theme.spacing(25),
@@ -101,10 +103,21 @@ function AccountPage() {
 
     return (
         <Paper elevation={3} sx={{ maxWidth: 1000, mx: 'auto', overflow: 'hidden' }}>
+            <Canvas style={{
+                position: 'fixed', // Fixed position
+                top: 0, // Align to the top of the viewport
+                left: 0, // Align to the left of the viewport
+                width: '100vw', // Full viewport width
+                height: '100vh', // Full viewport height
+                zIndex: -1, // Ensure it stays behind other content
+                filter: 'blur(12px)'
+            }}>
+                <Pseudo3dImage imageUrl="/landingImage.jpg" depthMapUrl="/landingImage_depth.jpg" />
+            </Canvas>
             <Box sx={{ bgcolor: 'primary.main', height: 240, position: 'relative' }} />
             <Stack direction="column" spacing={2} sx={{ p: 3 }}>
                 <Box sx={{ position: 'absolute', top: 80, left: '50%', transform: 'translateX(-50%)', width: '100%', display: 'flex', justifyContent: 'center' }}>
-                    <ProfilePicture alt="Profile Picture" src={`${process.env.REACT_APP_BACKEND_URL}/photos/get/${profile.profile_picture}` || "/static/default-profile.png"} />
+                    <ProfilePicture alt="Profile Picture" src={`${process.env.REACT_APP_BACKEND_URL}/photos/get/${profile.profile_picture}` || "/imagePlaceholder.jpeg"} />
                     
                     <UploadButton isLoading={isLoading} component="label">
                         <input type="file" disabled={isLoading} hidden onChange={handleFileChange} />

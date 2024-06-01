@@ -139,7 +139,7 @@ const DashboardPage = () => {
                 filter: 'brightness(90%)',
                 filter: 'blur(10px)',
             }}>
-                <Pseudo3dImage imageUrl="/landingImage.png" depthMapUrl="/landingImage_depth.png" />
+                <Pseudo3dImage imageUrl="/landingImage.jpg" depthMapUrl="/landingImage_depth.jpg" />
             </Canvas>
         </FullScreenWrapper>
     );

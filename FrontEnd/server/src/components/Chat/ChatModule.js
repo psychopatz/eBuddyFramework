@@ -200,7 +200,7 @@ const ChatModule = () => {
                     overflow: 'true',
                 }}>
                     {(isTemporary && data) && (
-                        <ToggleableBox title="Ingested Source">
+                        <ToggleableBox title="See the AI's Train of Thoughts">
                             {data && data.choices[0].sources.map((source, index) => (
                             <div key={index}>
                                 <Typography>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</Typography>

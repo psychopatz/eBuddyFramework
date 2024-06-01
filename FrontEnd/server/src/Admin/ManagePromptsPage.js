@@ -4,6 +4,9 @@ import PromptListView from "../components/Prompt/PromptListView";
 import { Box } from "@mui/material";
 import BtnCustom from "../components/BtnCustom";
 import PromptsForm from "../components/Prompt/PromptsForm";
+import Pseudo3dImage from "../components/Image/Pseudo3dImage";
+import { Canvas } from "@react-three/fiber";
+
 
 
 
@@ -39,7 +42,18 @@ const RightPanel = styled(Box)({
 const ManagePromptsPage = () => {
     return ( 
         <>
-        <PromptProvider> 
+        <PromptProvider>
+        <Canvas style={{
+                position: 'fixed', // Fixed position
+                top: 0, // Align to the top of the viewport
+                left: 0, // Align to the left of the viewport
+                width: '100vw', // Full viewport width
+                height: '100vh', // Full viewport height
+                zIndex: -1, // Ensure it stays behind other content
+                filter: 'blur(12px)'
+            }}>
+                <Pseudo3dImage imageUrl="/citLogo.jpg" depthMapUrl="/citLogo_depth.jpg" imgScale={0.5} />
+            </Canvas>
       <PageContainer>
         <LeftPanel>
           <BtnCustom variant="contained" color="primary" onClick={() => window.location.reload()}>Create New Dataset</BtnCustom>

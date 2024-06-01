@@ -4,6 +4,8 @@ import DatasetsForm from "../components/Dataset/DatasetsForm";
 import DatasetsListView from "../components/Dataset/DatasetsListView";
 import {DatasetProvider} from "../components/Dataset/DatasetContext";
 import BtnCustom from '../components/BtnCustom';
+import { Canvas } from '@react-three/fiber';
+import Pseudo3dImage from '../components/Image/Pseudo3dImage';
 
 const FormHeader = styled(Box)({
   display: 'flex',
@@ -37,7 +39,18 @@ const RightPanel = styled(Box)({
 
 const ManageDatasetsPage = () => {
   return (
-    <DatasetProvider> 
+    <DatasetProvider>
+      <Canvas style={{
+                position: 'fixed', // Fixed position
+                top: 0, // Align to the top of the viewport
+                left: 0, // Align to the left of the viewport
+                width: '100vw', // Full viewport width
+                height: '100vh', // Full viewport height
+                zIndex: -1, // Ensure it stays behind other content
+                filter: 'blur(12px)'
+            }}>
+                <Pseudo3dImage imageUrl="/citLogo.jpg" depthMapUrl="/citLogo_depth.jpg" imgScale={0.5} />
+            </Canvas> 
       <PageContainer>
         <LeftPanel>
           <BtnCustom variant="contained" color="primary" onClick={() => window.location.reload()}>Create New Dataset</BtnCustom>
