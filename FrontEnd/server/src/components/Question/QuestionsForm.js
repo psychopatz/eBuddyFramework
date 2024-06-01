@@ -76,11 +76,6 @@ const QuestionsForm = () => {
     return <Navigate to="/admin/train-ai" state={{ from: location }} replace />;
   }
 
-  // if(isEditing) { Unya na
-  //   return (
-  //     <DatasetsForm />
-  //   )
-  //   }else{
        return (
     <>
     {formData.chatHistory[0].role && formData.chatHistory.map((chat, index) => (

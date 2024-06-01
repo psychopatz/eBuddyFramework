@@ -339,17 +339,16 @@ class QuestionBase(BaseModel):
     tags: str
     isResolved: bool = False
     chatHistory: List[dict]  # List of objects with 'context' and 'role'
-    
 
-class QuestionCreate(QuestionBase):
-    pass
+    
 
 class QuestionUpdate(BaseModel):
     summary: Optional[str] = None
     tags: Optional[str] = None
     isResolved: Optional[bool] = None
     chatHistory: Optional[List[dict]] = None
-    datasetID: Optional[str] = ""
+
+
 
 class QuestionDisplay(BaseModel):
     id: int
@@ -359,13 +358,14 @@ class QuestionDisplay(BaseModel):
     isResolved: bool
     chatHistory: List[dict]
 
+
     class Config:
         orm_mode = True
         
         
 # Create a Question
 @app.post("/questions/", response_model=QuestionDisplay, status_code=status.HTTP_201_CREATED)
-def create_question(question: QuestionCreate, db: Session = Depends(get_db)):
+def create_question(question: QuestionBase, db: Session = Depends(get_db)):
     db_question = Question(**question.dict(), dateCreated=datetime.utcnow())
     db.add(db_question)
     db.commit()
@@ -551,6 +551,16 @@ async def update_ingest_dataset(id: int, dataset_data: DatasetUpdate, background
     
     return {"message": "Dataset updated successfully"}
 
+@app.delete("/llm/unlearn/{id}",status_code=status.HTTP_200_OK)
+async def delete_ingest_dataset(id: int, db:db_dependency):
+    db_dataset = db.query(Dataset).filter(Dataset.id == id).first()
+    if db_dataset is None:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    
+    # background_tasks = BackgroundTasks()
+    # background_tasks.add_task(delete_ingest_text_in_background, db_dataset.IngestId)
+    print(f"Deleting ingestion: {db_dataset.IngestId}")
+    print("Deletion Error: ",client.ingestion.delete_ingested(db_dataset.IngestId))
 
 
 #Save photo

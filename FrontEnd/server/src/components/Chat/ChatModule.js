@@ -165,7 +165,7 @@ const ChatModule = () => {
                                 width: '130px', 
                                 marginBottom: '100px' 
                             }}  />
-                        <Carousel items={sortToPopular(questions)} onItemClick={handleItemClick} />
+                        <Carousel items={sortToPopular(questions.filter(item => item.promptType === "CommonQuestion"))} onItemClick={handleItemClick} />
                     </Box>}
                 
                 {messages.map((message, index) => (
@@ -201,7 +201,7 @@ const ChatModule = () => {
                 }}>
                     {(isTemporary && data) && (
                         <ToggleableBox title="Ingested Source">
-                            {data.choices[0].sources.map((source, index) => (
+                            {data && data.choices[0].sources.map((source, index) => (
                             <div key={index}>
                                 <Typography>-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-</Typography>
                                 <Typography variant="h6">Dataset File Name:</Typography>

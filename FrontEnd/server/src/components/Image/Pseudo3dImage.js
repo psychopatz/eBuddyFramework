@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { extend, useFrame, useThree } from '@react-three/fiber';
 import { Plane, useTexture } from '@react-three/drei';
 import { shaderMaterial } from '@react-three/drei';
@@ -42,19 +42,21 @@ const Pseudo3dImage = ({ imageUrl, depthMapUrl }) => {
     const { viewport } = useThree();
 
     // Calculate the scale to maintain aspect ratio
-    // Calculate the scale to maintain aspect ratio and make it larger
     const scale = useMemo(() => {
         const imageAspect = texture.image ? texture.image.width / texture.image.height : 1;
         const viewportAspect = viewport.width / viewport.height;
         const baseScale = viewportAspect > imageAspect
             ? [viewport.width, viewport.width / imageAspect, 1]
             : [viewport.height * imageAspect, viewport.height, 1];
-        return baseScale.map(x => x * 1.1); // Increase scale by 50%
+        return baseScale.map(x => x * 1.1); // Increase scale by 10%
     }, [viewport, texture]);
 
-
-    useFrame((state) => {
-        depthMaterial.current.uMouse = [state.mouse.x * 0.01, state.mouse.y * 0.01];
+    useFrame((state, delta) => {
+        // Create a looping parallax movement
+        const time = state.clock.getElapsedTime();
+        const x = Math.sin(time * 0.5) * 0.02; // Adjust speed and amplitude as necessary
+        const y = Math.cos(time * 0.5) * 0.02;
+        depthMaterial.current.uMouse = [x, y];
     });
 
     return (

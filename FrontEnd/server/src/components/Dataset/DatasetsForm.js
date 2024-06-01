@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import BtnCustom from '../BtnCustom';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import {DatasetContext} from './DatasetContext';
+import ManageCurrentImages from '../Image/ManageImages';
+import { findImageUrls } from '../Image/findImageUrls';
 
 const StyledForm = styled(Box)(({ theme }) => ({
   maxWidth: "100%",
@@ -77,7 +79,7 @@ const isFormDataEmpty = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log('Form Data:', formData);
+    // console.log('Form Data:', formData);
      if (isCreating) {
         console.log('Create action initiated');
         handleCreate(); // Call create specific logic
@@ -86,7 +88,7 @@ const isFormDataEmpty = () => {
         handleUpdate(formData.id);
         // handleUpdateSubmit(); // Call update specific logic
   }
-  console.log('Form Data:', formData);
+  // console.log('Form Data:', formData);
     setIsEditing(false);
   };
 
@@ -148,6 +150,9 @@ const isFormDataEmpty = () => {
           }
         }}
       />
+      <ManageCurrentImages buttonLabel="Manage Images" imageUrls={findImageUrls(formData.answer)}>
+
+      </ManageCurrentImages>
 
       <StyledTextField
         label="Context"

@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Button, Box } from '@mui/material';
+import { Button, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useChat } from './ChatContext';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -32,12 +32,37 @@ const StyledButton = styled(Button)(({ theme }) => ({
   margin: '8px',
 }));
 
+const StyledDialogList = styled(List)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center', 
+  justifyContent: 'center', 
+  width: '100%', 
+  height: '100%', 
+  padding: theme.spacing(1),
+  
+}));
+
+const StyledDialogListItem = styled(ListItem)(({ theme }) => ({
+  cursor: 'pointer',
+  width: '100%', 
+  alignItems: 'center',
+  justifyContent: 'center', 
+  color: "black",
+  '&:hover': {
+    backgroundColor: theme.palette.primary.main,
+    color: "white",
+  }
+}));
+
+
 function HistoryDrawer() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [hoveredItemIndex, setHoveredItemIndex] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState(null);
-  const { setChatHistory, setCurrentChatIndex, currentChatIndex, chatHistory, newChat, loadHistory,handleShare, isTemporary } = useChat();
+  const { setChatHistory, setCurrentChatIndex, currentChatIndex, chatHistory, newChat, loadHistory,handleShare, isTemporary,} = useChat();
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);  
@@ -49,6 +74,15 @@ function HistoryDrawer() {
     setAnchorEl(event.currentTarget);
     setHoveredItemIndex(index);
     setSelectedItemIndex(index);
+  };
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleDialogAction = (reportType) => {
+    handleShare(reportType);  
+    handleDialogClose(); 
+    
   };
 
   const handleClose = () => {
@@ -65,7 +99,7 @@ function HistoryDrawer() {
         newChat();
       }
     }else if (action === 'share') {
-      handleShare();
+      setDialogOpen(true);
     }
     handleClose();
   };
@@ -132,6 +166,20 @@ function HistoryDrawer() {
         <MenuItem onClick={() => handleMenuAction('delete')}>Delete chat</MenuItem>
       </Menu>
     </Drawer>
+
+     <Dialog open={dialogOpen} onClose={handleDialogClose} >
+      <DialogTitle sx={{ }}>{"Report Chat"}</DialogTitle>
+      <DialogContent alignContent="center" sx={{width: "8vw"}}>
+         <StyledDialogList>
+            <StyledDialogListItem onClick={() => handleDialogAction("incorrect")}>Incorrect</StyledDialogListItem>
+            <StyledDialogListItem onClick={() => handleDialogAction("outdated")}>Outdated</StyledDialogListItem>
+            <StyledDialogListItem onClick={() => handleDialogAction("irrelevant")}>Irrelevant</StyledDialogListItem>
+          </StyledDialogList>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleDialogClose} sx={{color: "white"}}>Close</Button>
+      </DialogActions>
+      </Dialog>
     </>
   );
 }

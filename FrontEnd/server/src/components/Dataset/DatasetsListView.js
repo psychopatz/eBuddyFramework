@@ -31,7 +31,7 @@ const StyledAvatar = styled(MuiAvatar)(({ isFound }) => ({
 
 
 function DatasetsListView({ listHeight }) {
-  const { items, handleListItemClick, handleEdit, handleDelete, currentId, setCurrentId,ingestsDocs } = useContext(DatasetContext);
+  const { items, handleListItemClick, handleEdit, handleDelete, currentId, setCurrentId,ingestsDocs,handleUnlearn } = useContext(DatasetContext);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -66,6 +66,9 @@ function DatasetsListView({ listHeight }) {
     return false; // Return false if 'documents' is not available
 };
 
+
+
+
 const sortedItems = [...items].sort((a, b) => b.id - a.id);
   return (
     <ScrollableContainer height={listHeight}>
@@ -99,15 +102,16 @@ const sortedItems = [...items].sort((a, b) => b.id - a.id);
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {/* <MenuItem onClick={() => { 
-          console.log("Edit action for:", selectedItemId);
+        <MenuItem onClick={() => { 
+          console.log("Unlearn action for:", currentId);
+          handleUnlearn(currentId)
           handleClose(); 
-          }}>Unlearn</MenuItem> */}
+          }}>Unlearn</MenuItem>
         <MenuItem onClick={() => {
           console.log("Delete action for:", currentId);
           handleDelete(currentId);
           handleClose();
-        }}>Delete</MenuItem>
+        }}>Delete Dataset</MenuItem>
       </Menu>
     </ScrollableContainer>
   );

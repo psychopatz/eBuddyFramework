@@ -37,7 +37,7 @@ export const PromptProvider = ({ children }) => {
           popularity: item.popularity,
         }));
         setItems(mappedItems);
-        console.log('Datasets fetched:', response.data);
+        // console.log('Datasets fetched:', response.data);
       })
       .catch(error => {
         console.error('Failed to fetch datasets:', error);

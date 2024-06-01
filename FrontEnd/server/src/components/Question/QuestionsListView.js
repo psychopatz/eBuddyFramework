@@ -67,13 +67,20 @@ function QuestionsListView({ listHeight }) {
           <MenuItem value="all">All</MenuItem>
           <MenuItem value="answered">Answered</MenuItem>
           <MenuItem value="unanswered">Unanswered</MenuItem>
+          <MenuItem value="unknown">Unknowned to AI</MenuItem>
+          <MenuItem value="incorrect">Incorrect Answers</MenuItem>
+          <MenuItem value="irrelevant">Irrelevant Answers</MenuItem>
+
         </Select>
       </FormControl>
       <List>
         {sortedItems.filter(item => 
           filter === 'all' || 
           (filter === 'answered' && item.isResolved) || 
-          (filter === 'unanswered' && !item.isResolved)
+          (filter === 'unanswered' && !item.isResolved) ||
+          (filter === 'unknown' && item.tags === 'unknown') ||
+          (filter === 'incorrect' && item.tags === 'incorrect') ||
+          (filter === 'irrelevant' && item.tags === 'irrelevant')
           ).map(item => (
           <ListItem
             key={item.id}
@@ -92,7 +99,7 @@ function QuestionsListView({ listHeight }) {
             <ListItemAvatar>
               {item.isResolved ? <CheckCircleIcon style={{ color: 'green' }} /> : <CancelIcon style={{ color: 'red' }} /> }
             </ListItemAvatar>
-            <ListItemText primary={item.summary} secondary={"Date Created: " + item.dateCreated} />
+            <ListItemText primary={item.summary} secondary={"Type: "+item.tags+", Date Created: " + item.dateCreated} />
           </ListItem>
         ))}
       </List>

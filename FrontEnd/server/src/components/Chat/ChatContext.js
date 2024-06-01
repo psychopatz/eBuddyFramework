@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import useLocalStorage from '../../API/useLocalStorage';
-import useFetchData from '../../API/useFetchData';
 import GetCurrentDate from '../../Tools/GetCurrentDate';
 import { ApiQuestion } from '../../API/ApiQuestion';
 import { useToast } from '../Notification/Toast';
@@ -23,6 +22,7 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
     const [boilerPlate, setBoilerPlate] = useState({});
     const showToast = useToast();
     const [questions,setQuestions] = useState([]);
+    // const [shareState,setShareState] = useState("unknown") //Unknown, wrong, outdated
 
 
     const getSystemPrompt = (items) => {
@@ -114,31 +114,42 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
         window.location.reload();
     };
 
-      const handleShare = () => {
+     const handleShare = (shareState = "unknown") => {
+        console.log("HandleShare Triggered");
         if (messages.length > 0) {
             const summaryContent = messages.length >= 2 ? messages[messages.length - 2].content : messages[0].content;
+            // Declare and initialize data first
+
             const data = {
-            "summary": summaryContent,
-            "isResolved": false,
-            "chatHistory": messages,
+                "summary": summaryContent,
+                "isResolved": false,
+                "chatHistory": messages,
+                "tags": shareState,
+
             };
+            // Now access data.choices safely
+
             console.log('Create action initiated:', data);
             ApiQuestion.create(data)
             .then(response => {
-               console.log("Share successful: ", response);
-               showToast('Chat Reporterd to the Admin, try asking later!', 'info');
+                console.log("Share successful: ", response);
+                if(shareState==="unknown"){
+                    showToast('Sorry I dont currently know this, I will report this question to the admins.', 'warning')
+                    showToast('Please just ask this questions later. I\'m not comfortable to my question, yet.', 'info');;
+
+                }else{
+                    showToast('This Chat has been successfully reported to the Admin, please wait for the admins to teach me!', 'success');
+                    showToast('Thank you! Your feedback will greatly improved us, try asking this question later!', 'info');
+                }
                 
             })
             .catch(error => {
                 console.error('Failed to create dataset:', error);
             }).finally(() => {
                 // window. location. reload();
-            })
-            ;
-            
+            });
         }
-            
-        };
+    };
 
     return (
         <ChatContext.Provider 

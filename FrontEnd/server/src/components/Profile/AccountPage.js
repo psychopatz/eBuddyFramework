@@ -7,6 +7,8 @@ import { uploadFile } from '../../API/ApiUpload';
 import { ApiAdmin } from '../../API/ApiAdmin';
 import ChangePasswordDialog from './ChangePasswordDialog';
 import BtnCustom from '../BtnCustom';
+import DelayedReload from '../../Tools/DelayedReload';
+import { useToast } from '../Notification/Toast';
 
 const ProfilePicture = styled(Avatar)(({ theme }) => ({
     width: theme.spacing(25),
@@ -25,21 +27,24 @@ const CustomTextField = styled(TextField)({
     }
 });
 
-const UploadButton = styled(IconButton)({
+const UploadButton = styled(IconButton)(({ isLoading }) => ({
     position: 'absolute',
     bottom: 0,
     right: '52%',
-    backgroundColor: 'white',
-    color: 'grey',
+    backgroundColor: isLoading ? 'darkred' : 'white',
+    color: isLoading ? 'white' : 'grey',
     '&:hover': {
-        backgroundColor: '#f4f4f4',
+        backgroundColor: isLoading ? 'red' : '#f4f4f4',
         color: 'black'
     }
-});
+}));
 
 function AccountPage() {
     const [adminCredentials, setAdminCredentials] = useLocalStorage('adminCredentials', {});
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const delayedReload = DelayedReload({ delay: 3000 });
+    const showToast = useToast();
+    const [isLoading,setIsLoading] = useState(false)
     const [profile, setProfile] = useState({
         email: '',
         firstName: '',
@@ -57,12 +62,14 @@ function AccountPage() {
         console.log("filename: ", file.name)
         if (file) {
             try {
+                setIsLoading(true)
+                showToast('Uploading your image, Please Wait...', 'info');
                 const uploadedData = await uploadFile(file);
                 console.log("Uploaded Data: ", uploadedData);
                 let updatedProfile = {
-                    ...profile,password: ""
+                    ...profile
                 }
-                updatedProfile.profile_picture = file.name
+                updatedProfile.profile_picture = uploadedData.filename
                 setProfile(updatedProfile);
                 console.log("UpdatedProfile: ", updatedProfile)
                 console.log("profile: ", profile);
@@ -71,10 +78,15 @@ function AccountPage() {
                 const response = await ApiAdmin.update(adminCredentials.id, updatedProfile);
                 setAdminCredentials(response.data);
                 console.log('Update response:', response);
-
+                showToast('Profile Picture Changed Successfully!', 'success');
+                
 
             } catch (error) {
                 console.error('Error uploading file:', error);
+                showToast(error, 'error');
+            }
+            finally{
+                delayedReload.triggerReload();
             }
         }
     };
@@ -94,8 +106,8 @@ function AccountPage() {
                 <Box sx={{ position: 'absolute', top: 80, left: '50%', transform: 'translateX(-50%)', width: '100%', display: 'flex', justifyContent: 'center' }}>
                     <ProfilePicture alt="Profile Picture" src={`${process.env.REACT_APP_BACKEND_URL}/photos/get/${profile.profile_picture}` || "/static/default-profile.png"} />
                     
-                    <UploadButton component="label">
-                        <input type="file" hidden onChange={handleFileChange} />
+                    <UploadButton isLoading={isLoading} component="label">
+                        <input type="file" disabled={isLoading} hidden onChange={handleFileChange} />
                         <PhotoCamera />
                     </UploadButton>
                 </Box>

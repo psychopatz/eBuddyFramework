@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Typography, FormControl } from '@mui/material';
 import { ApiAdmin } from '../../API/ApiAdmin';
+import { useToast } from '../Notification/Toast';
 
 function ChangePasswordDialog({ adminId, open, onClose, email }) {
+    const showToast = useToast();
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [retypedPassword, setRetypedPassword] = useState('');
@@ -25,6 +27,10 @@ function ChangePasswordDialog({ adminId, open, onClose, email }) {
 
     const verifyAndUpdatePassword = async (event) => {
     event.preventDefault();
+    if(!newPassword || !currentPassword || !retypedPassword){
+        setLoginError("Fill up All Forms.");
+        return;
+    }
     if (newPassword == currentPassword) {
         setLoginError("Do not use your current password as your new password.");
         return;
@@ -51,8 +57,10 @@ function ChangePasswordDialog({ adminId, open, onClose, email }) {
         try {
             const response = await ApiAdmin.update(adminId, { password: newPassword });
             console.log('Password update response:', response);
+            showToast("Password Successfuly Updated!", 'success');
             onClose(); // Close dialog on successful update
         } catch (error) {
+            setLoginError(error)
             console.error('Error updating password:', error);
         }
     };
@@ -102,8 +110,8 @@ function ChangePasswordDialog({ adminId, open, onClose, email }) {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onClose}>Cancel</Button>
-                    <Button type="submit">Update</Button>
+                    <Button onClick={onClose} sx={{color: "white"}}>Cancel</Button>
+                    <Button type="submit" sx={{color: "white"}}>Update</Button>
                 </DialogActions>
             </form>
         </Dialog>

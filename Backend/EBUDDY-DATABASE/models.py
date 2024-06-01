@@ -45,7 +45,8 @@ class Question(Base):
     dateCreated = Column(DateTime(timezone=True), server_default=func.now())
     isResolved = Column(Boolean, default=False)
     chatHistory = Column(JSON, nullable=False)  # Using JSON to store the list of chat objects
-    datasetID = Column(String(255), nullable=True)
+
+    
 
 #Photo Model
 class Photo(Base):

@@ -37,7 +37,7 @@ export const DatasetProvider = ({ children }) => {
           ingestId: item.IngestId
         }));
         setItems(mappedItems);
-        console.log('Datasets fetched:', response.data);
+        // console.log('Datasets fetched:', response.data);
       })
       .catch(error => {
         console.error('Failed to fetch datasets:', error);
@@ -47,7 +47,7 @@ export const DatasetProvider = ({ children }) => {
       ApiIngest.list()
       .then(response => {
         setIngestsDocs(response.data); // Assuming the response data is the array of ingests
-        console.log("Ingests fetched:", response.data);
+        // console.log("Ingests fetched:", response.data);
       })
       .catch(err => {
         console.error("Failed to fetch ingests", err);
@@ -96,11 +96,11 @@ export const DatasetProvider = ({ children }) => {
       "Answer": formData.answer.replace(/[^\x00-\x7F]/g,""),
       "Context": formData.context.replace(/[^\x00-\x7F]/g,"")
     };
-    console.log('Form Data: Sent to API', data);
+    // console.log('Form Data: Sent to API', data);
     setIsEditing(true);
     ApiIngest.update(id, data)
       .then(() => {
-        console.log('Form Data updated:', data);
+        // console.log('Form Data updated:', data);
         showToast('Dataset Updated Successfully!', 'success');
         setIsEditing(false);
       })
@@ -123,6 +123,20 @@ export const DatasetProvider = ({ children }) => {
       });
   };
 
+  const handleUnlearn = (id) => {
+    ApiIngest.unlearn(id)
+      .then(() => {
+        setItems(items.filter(item => item.id !== id));
+        showToast('The AI successfully unlearned the Topic!', 'warning');
+        delayedReload.triggerReload();
+        
+      })
+      .catch(error => {
+        console.error('Failed to unlearn the dataset:', error);
+        showToast('Error Deleting Dataset, Try Again later!', 'error');
+      });
+  };
+
   const value = {
     items,
     formData,
@@ -138,7 +152,8 @@ export const DatasetProvider = ({ children }) => {
     setIsEditing,
     isCreating,
     setIsCreating,
-    ingestsDocs
+    ingestsDocs,
+    handleUnlearn
   };
 
   return <DatasetContext.Provider value={value}>{children}</DatasetContext.Provider>;
