@@ -20,6 +20,7 @@ else
     echo "ngrok is present."
 fi
 
+chmod +x ngrok
 
 # Setup ngrok authtoken
 echo "Setting up ngrok authtoken..."
