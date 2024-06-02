@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, status, BackgroundTasks,  File, UploadFile 
+from fastapi import FastAPI, HTTPException, Depends, status, BackgroundTasks,  File, UploadFile, Response 
 from starlette.responses import HTMLResponse, FileResponse 
 import os
 import uuid
@@ -24,13 +24,15 @@ print(f"LLM Url; {privateGPTBackendURL}")
 pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12)
 
 
+
+
 app = FastAPI(
     title="eBuddy Database Backend",
     description="Server for managing Admin, Datasets and User Question",
     version="0.0.1",
     contact={
         "name": "eBuddy's",
-        "url": "http://localhost:3000",
+        "url": "https://ebuddy-ml.vercel.app/",
     }
     )
 
@@ -42,6 +44,12 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers['Content-Security-Policy'] = "default-src https: http:; script-src https: http: 'unsafe-inline' 'unsafe-eval';"
+    return response
 
 
 #PrivateGPT URL, the ingestion service is usually hidden  basin mahack so ari ra i expose
