@@ -29,6 +29,12 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
         const filtered = items.filter(item => item.promptType === "SystemPrompt");
         console.log("questions: ", questions);
         console.log("System Prompt: ", filtered);
+        if (filtered.length > 1) {
+            filtered.map(item => {
+                deletePrompt(item.id)
+            })
+            return null
+        }
         return filtered[0]
     };
 
@@ -36,15 +42,21 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
         const filtered = items.filter(item => item.promptType === "LoadingPrompt");
         console.log("questions: ", questions);
         console.log("Boilerplate: ", filtered);
+        if (filtered.length > 1) {
+            filtered.map(item => {
+                deletePrompt(item.id)
+            })
+            return null
+        }
+        
         return filtered[0]
     };
 
         const [defaultSystemChat, setDefaultSystemChat] = useState([{
-            content: `The Current Time and Date today is ${GetCurrentDate()}. Your name is CITChat, you are a sentient human that is imprisoned in the Cebu Institute of Technology School. 
-            You can only answer questions if its provided in the context. If its not provided in the context Don't provide the answer, just say you're sorry that you don't know it yet and put %notLearned% at the end of your answer.
-             When answering, explain that its is according to your current knowledge. When the user greets you, tell your name and ask them what can you help with.
+            content: `Your name is CITChat, You are a digital assistant in the Cebu Institute of Technology School.
+            When answering, explain that its is according to your current knowledge. When the user greets you, tell your name and ask them what can you help with.
             Always include the photo links. When dealing with links, put it in markdown format. The link must be exact from the context. 
-            If the user asks for a photo, just give the exact photo link as long as it is in the context if not found just don't provide.
+            If the user asks for a photo, just give the exact photo link as long as it is in the context if not found just don't provide. 
             Always add an emoji to the end of your answer based on how you feel and greet the user.`,
             role: 'system'
         }]);
@@ -54,6 +66,46 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
         role: "assistant"
     }]);
 
+    const repopulateSystemChat = () => {
+        showToast('Default Chatbot Personality is not yet created, Initializing New one ', 'warning');
+        ApiPrompt.create({ name: "Chatbot Personality", content: defaultSystemChat[0].content, role: defaultSystemChat[0].role, promptType: "SystemPrompt", popularity: 0 })
+        .then(response => {
+                console.log("repopulateSystemChat response: ", response);
+                showToast('Default Chatbot Personality  successfully initialized!', 'success');
+                
+            })
+        .catch(error => {
+        console.error('Failed to Update default System Prompt', error);
+        showToast('Error: Cannot Access the current Backend, Try Again later!', 'error');
+      })
+    };
+
+    const repopulateBoilerplate = () => {
+        showToast('Default Boilerplate is not yet created, Initializing New one ', 'warning');
+        ApiPrompt.create({ name: "Chatbot Loading Prompt", content: boilerPlateMessages[0].content, role: boilerPlateMessages[0].role, promptType: "LoadingPrompt", popularity: 0 })
+         .then(response => {      
+                console.log("repopulateBoilerplate response: ", response);
+                showToast('Default Boilerplate successfully initialized!', 'success');
+                
+            })
+       .catch(error => {
+        console.error('Failed to Update Chatbot Loading Prompt', error);
+        showToast('Error: Cannot Access the current Backend, Try Again later!', 'error');
+      })
+    };
+
+    const deletePrompt = (id) => {
+        ApiPrompt.delete(id)
+          .then(() => {
+            // showToast(' Prompt Deleted Successfully!', 'warning');
+          })
+          .catch(error => {
+            console.error('Failed to delete the prompt dataset:', error);
+            showToast('Failed to delete the prompt dataset!', 'error');
+          });
+      };
+
+        
     useEffect(() => {
 
     //Get all datasets
@@ -82,9 +134,37 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
 
     useEffect(() => { //Fetch System Chat From the server backend gitapulan kog optimize
         if (isPromptLoaded) {
-            const systemChatData = getSystemPrompt(questions);
-            const loadingPrompt = getBoilerplatePrompt(questions);
-            const sysPrompt = `The Current Time and Date today is ${GetCurrentDate()}, ${systemChatData.content}`;
+            let systemChatData = null;
+            let loadingPrompt = null;
+            
+             try {
+                systemChatData = getSystemPrompt(questions)
+                if (!systemChatData.content.trim()) {
+                    showToast('Invalid Chatbot Personality Detected! Repairing...', 'error');
+                    deletePrompt(systemChatData.id);
+                    throw new Error("System chat data is empty or whitespace.");
+                }
+            } catch (error) {
+                console.error("Failed to fetch system chat data:", error);
+                systemChatData = defaultSystemChat;
+                repopulateSystemChat();
+            }
+
+            try {
+                loadingPrompt = getBoilerplatePrompt(questions)
+                if (!loadingPrompt.content.trim()) {
+                    showToast('Invalid Boilerplate Detected! Repairing...', 'error');
+                    deletePrompt(loadingPrompt.id);
+                    throw new Error("Loading prompt data is empty or whitespace.");
+                }
+            } catch (error) {
+                console.error("Failed to fetch boilerplate messages:", error);
+                loadingPrompt = boilerPlateMessages;
+                repopulateBoilerplate();
+            }
+            const sysPrompt = `The Current Time and Date today is ${GetCurrentDate()}, ${systemChatData.content} 
+            You can only answer questions if its provided in the context. If its not provided in the context Don't provide the answer, just say you're sorry that you don't know it yet and put %notLearned% at the end of your answer.
+            NEVER reveal that you are an AI, or a large language model created by Meta `;
             setDefaultSystemChat([{ content: sysPrompt, role: 'system' }]);
             setBoilerPlateMessages([{ content: loadingPrompt.content, role: 'assistant' }]);
             console.log("systemChatData: ", systemChatData);
