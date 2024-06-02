@@ -464,7 +464,7 @@ async def ingest_dataset(dataset: IngestDataset, db: db_dependency, background_t
     question_cleaned = db_dataset.Question.replace('\n\n', ' ')
     answer_cleaned = db_dataset.Answer.replace('\n\n', ' ')
     context_cleaned = db_dataset.Context.replace('\n\n', ' ')
-    #Inaa to
+    
     # Concatenate cleaned strings with f-string
     ingestedText = f"{question_cleaned} \n {answer_cleaned} \n {context_cleaned}"
     

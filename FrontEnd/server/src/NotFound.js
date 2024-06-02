@@ -21,6 +21,7 @@ const NotFound = () => {
                 color: 'text.primary'
             }}
         >
+            <Pseudo3dImage imageUrl="/landingImage.png" depthMapUrl="/landingImage_depth.png" />
             <Typography variant="h1" component="h1" gutterBottom>
                 Error 404
             </Typography>
