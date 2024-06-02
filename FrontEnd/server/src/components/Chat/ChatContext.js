@@ -162,9 +162,7 @@ export const ChatProvider = ({ children,isTemporary = false }) => {
                 loadingPrompt = boilerPlateMessages;
                 repopulateBoilerplate();
             }
-            const sysPrompt = `The Current Time and Date today is ${GetCurrentDate()}, ${systemChatData.content} 
-            You can only answer questions if its provided in the context. If its not provided in the context Don't provide the answer, just say you're sorry that you don't know it yet and put %notLearned% at the end of your answer.
-            NEVER reveal that you are an AI, or a large language model created by Meta `;
+            const sysPrompt = `The Current Time and Date today is ${GetCurrentDate()}, ${systemChatData.content}`;
             setDefaultSystemChat([{ content: sysPrompt, role: 'system' }]);
             setBoilerPlateMessages([{ content: loadingPrompt.content, role: 'assistant' }]);
             console.log("systemChatData: ", systemChatData);

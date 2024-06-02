@@ -23,6 +23,7 @@ const Banner = () => {
                 sx={{
                     width: { xs: '100px', sm: '130px' },  
                     height: 'auto', 
+                    filter: 'drop-shadow(2px 2px 2px rgba(255,255,255,0.3))'
                 }}
             />
         </Box>

@@ -51,10 +51,10 @@ function NavBar() {
     ];
 
     return (
-        <AppBar position="sticky">
+        <AppBar position="sticky" >
             <StyledToolbar>
                 <Box sx={{ width: '150px', height: 'auto', cursor: 'pointer' }} onClick={() => navigate('/admin')}>
-                    <img src="/logoText.png" alt="Company Logo" style={{ width: '100%', height: 'auto' }} />
+                    <img src="/logoText.png" alt="Company Logo" style={{ width: '100%', height: 'auto', filter: 'drop-shadow(2px 2px 2px rgba(255,255,25,0.3))' }} />
                 </Box>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, justifyContent: 'flex-end' }}>

@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import {
   List, ListItem as MuiListItem, ListItemAvatar, Avatar, ListItemText,
-  IconButton, Menu, MenuItem, FormControl, InputLabel, Select
+  IconButton, Menu, MenuItem, FormControl, InputLabel, Select, Box
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { QuestionContext } from './QuestionContext';
@@ -53,10 +53,10 @@ function QuestionsListView({ listHeight }) {
 
 
   return (
-    <ScrollableContainer height={listHeight} >
-      
+    <ScrollableContainer height={listHeight}  >
+      <Box sx={{ marginTop: '10px' }}>
       <FormControl fullWidth>
-        <InputLabel id="filter-label" >Filter Questions</InputLabel>
+        <InputLabel id="filter-label"  >Filter Questions</InputLabel>
         <Select
           labelId="filter-label"
           value={filter}
@@ -121,6 +121,7 @@ function QuestionsListView({ listHeight }) {
               handleClose();
           }}>Delete</MenuItem>
       </Menu>
+      </Box>
     </ScrollableContainer>
   );
 }
