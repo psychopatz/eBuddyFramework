@@ -460,8 +460,13 @@ def ingest_text_in_background(dataset_name, text, db_dataset, db):
 async def ingest_dataset(dataset: IngestDataset, db: db_dependency, background_tasks: BackgroundTasks):
     db_dataset = Dataset(**dataset.dict())
     # ingestedText = f"{db_dataset.Question.replace('\n\n', ' ')} \n {db_dataset.Answer.replace('\n\n', ' ')} \n {db_dataset.Context.replace('\n\n', ' ')}"
-    ingestedText = f"{db_dataset.Question.replace('\\n\\n', ' ')} \n {db_dataset.Answer.replace('\\n\\n', ' ')} \n {db_dataset.Context.replace('\\n\\n', ' ')}"
+    # Perform replacements outside the f-string
+    question_cleaned = db_dataset.Question.replace('\n\n', ' ')
+    answer_cleaned = db_dataset.Answer.replace('\n\n', ' ')
+    context_cleaned = db_dataset.Context.replace('\n\n', ' ')
 
+    # Concatenate cleaned strings with f-string
+    ingestedText = f"{question_cleaned} \n {answer_cleaned} \n {context_cleaned}"
     
     # Adding the ingestion to background tasks
     background_tasks.add_task(ingest_text_in_background, db_dataset.name, ingestedText, db_dataset, db)
