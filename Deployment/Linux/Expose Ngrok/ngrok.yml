@@ -5,7 +5,9 @@ tunnels:
   ollama:
     proto: http
     addr: 11434
+    region: ap
   # database:
   #   proto: http
   #   addr: 8000
+  # region: ap
 
