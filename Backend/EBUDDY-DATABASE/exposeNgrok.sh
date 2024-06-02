@@ -27,6 +27,14 @@ echo "Setting up ngrok authtoken..."
 ./ngrok authtoken 2golIlBy6lR4I26eAJEaVspKrLa_7F2c3LPbDtewRAKkqYkzD
 
 # Start ngrok in the background
-clear
-echo "Starting ngrok to expose port 8000..."
-./ngrok http 8000 
+./ngrok http 8000 > /dev/null &
+
+# Give ngrok some time to initialize
+sleep 5
+
+# Fetch the ngrok tunnel URL using ngrok's local API
+NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | grep -o "https://[0-9a-z]*\.ngrok.io")
+
+# Output the ngrok URL
+echo "Your ngrok URL is: $NGROK_URL"
+echo "Visit http://127.0.0.1:4040 to see the ngrok dashboard and URLs."
