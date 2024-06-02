@@ -1,13 +1,15 @@
 version: 1
 authtoken: 2hLBJdivCS85JlrtlxBdGBTQHWU_2iMj7TAYNEFYuUTSyzZ7a
 tunnels:
-
   ollama:
     proto: http
     addr: 11434
     region: ap
+    opts:
+      log: stderr
+      host-header: "localhost:11434"
+  # Uncomment the following section to enable the database tunnel
   # database:
   #   proto: http
   #   addr: 8000
-  # region: ap
-
+  #   region: ap
