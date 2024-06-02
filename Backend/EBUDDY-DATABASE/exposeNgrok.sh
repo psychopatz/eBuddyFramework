@@ -3,10 +3,13 @@
 # Function to download ngrok if not present
 download_ngrok() {
     echo "Downloading ngrok..."
-    wget -q https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-    unzip ngrok-stable-linux-amd64.zip
-    rm ngrok-stable-linux-amd64.zip
-    echo "ngrok downloaded and unzipped."
+    # Download the ngrok zip file
+    wget -q https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip -O ngrok.zip
+    # Unzip the ngrok executable directly to the current directory, overwriting without prompting
+    unzip -o ngrok.zip -d ./
+    # Remove the downloaded zip file after extraction
+    rm ngrok.zip
+    echo "ngrok downloaded and unzipped into the current directory."
 }
 
 # Check if ngrok is available
