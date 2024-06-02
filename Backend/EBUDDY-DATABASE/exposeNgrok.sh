@@ -47,8 +47,10 @@ NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[] | sele
 
 # Output the ngrok URL
 if [ -z "$NGROK_URL" ]
+echo "To manage your agents, visit https://dashboard.ngrok.com/tunnels/agents"
 then
-    echo "Failed to fetch ngrok URL. Please check ngrok's status at http://127.0.0.1:4040"
+    echo "Failed to fetch ngrok URL. Please check ngrok's status at https://dashboard.ngrok.com/cloud-edge/endpoints"
 else
     echo "Your ngrok URL is: $NGROK_URL"
+	
 fi
