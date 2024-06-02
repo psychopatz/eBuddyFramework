@@ -16,9 +16,10 @@ import models
 from models import Admin, Dataset, Question, Prompt, Photo
 
 load_dotenv()
-BackendCurrentURL = os.getenv("BackendCurrentURL") #"http://192.168.97.155:8000"
+# BackendCurrentURL = os.getenv("BackendCurrentURL") #"http://192.168.97.155:8000"
 privateGPTBackendURL = os.getenv("privateGPTBackendURL") #"http://192.168.97.155:8001"
-print(f"Backend URL: {BackendCurrentURL}. LLM Url; {privateGPTBackendURL}")
+# print(f"Backend URL: {BackendCurrentURL}. LLM Url; {privateGPTBackendURL}")
+print(f"LLM Url; {privateGPTBackendURL}")
 
 pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12)
 
@@ -458,7 +459,9 @@ def ingest_text_in_background(dataset_name, text, db_dataset, db):
 @app.post("/llm/ingest", response_model=str, status_code=status.HTTP_201_CREATED)
 async def ingest_dataset(dataset: IngestDataset, db: db_dependency, background_tasks: BackgroundTasks):
     db_dataset = Dataset(**dataset.dict())
-    ingestedText = f"{db_dataset.Question.replace('\n\n', ' ')} \n {db_dataset.Answer.replace('\n\n', ' ')} \n {db_dataset.Context.replace('\n\n', ' ')}"
+    # ingestedText = f"{db_dataset.Question.replace('\n\n', ' ')} \n {db_dataset.Answer.replace('\n\n', ' ')} \n {db_dataset.Context.replace('\n\n', ' ')}"
+    ingestedText = f"{db_dataset.Question.replace('\\n\\n', ' ')} \n {db_dataset.Answer.replace('\\n\\n', ' ')} \n {db_dataset.Context.replace('\\n\\n', ' ')}"
+
     
     # Adding the ingestion to background tasks
     background_tasks.add_task(ingest_text_in_background, db_dataset.name, ingestedText, db_dataset, db)
