@@ -37,20 +37,4 @@ echo "Setting up ngrok authtoken..."
 ./ngrok authtoken 2golIlBy6lR4I26eAJEaVspKrLa_7F2c3LPbDtewRAKkqYkzD
 
 # Start ngrok in the background
-./ngrok http 8000 > /dev/null &
-
-# Give ngrok some time to initialize
-sleep 10
-
-# Fetch the ngrok tunnel URL using ngrok's local API
-NGROK_URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[] | select(.proto == "https") | .public_url')
-
-# Output the ngrok URL
-if [ -z "$NGROK_URL" ]
-echo "To manage your agents, visit https://dashboard.ngrok.com/tunnels/agents"
-then
-    echo "Failed to fetch ngrok URL. Please check ngrok's status at https://dashboard.ngrok.com/cloud-edge/endpoints"
-else
-    echo "Your ngrok URL is: $NGROK_URL"
-	
-fi
+./ngrok http 8000 
