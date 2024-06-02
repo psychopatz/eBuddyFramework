@@ -7,3 +7,4 @@ pgpt_python
 apscheduler
 passlib[bcrypt]
 python-dotenv
+cryptography

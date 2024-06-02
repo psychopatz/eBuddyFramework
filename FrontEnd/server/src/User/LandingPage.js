@@ -46,15 +46,15 @@ const LandingPage = () => {
     return (
         <FullScreenWrapper>
             <StyledBox>
-                <img src="/banner.png" alt="Logo" style={{ width: '130px', marginBottom: '20px' }} />
-                <Typography variant="h4" sx={{ color: 'primary.light', textAlign: 'center' }}>
+                <img src="/banner.png" alt="Logo" style={{ width: '130px', marginBottom: '20px', filter: 'drop-shadow(10px 10px 5px rgba(0,0,0,0.5))' }} />
+                <Typography variant="h4" sx={{ color: 'primary.light', textAlign: 'center', textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
                     Ask anything with CITChat: AI-Machine Learning Powered Support for the CIT Community
                 </Typography>
-                <Typography variant="h5" sx={{ color: 'secondary.main', textAlign: 'center' }}>
+                <Typography variant="h5" sx={{ color: 'secondary.main', textAlign: 'center', textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
                     A chat system specifically designed to streamline and enhance communication about CIT 
                     information services.
                 </Typography>
-                <Typography variant="h5" sx={{ color: 'secondary.main', textAlign: 'center' }}>
+                <Typography variant="h5" sx={{ color: 'secondary.main', textAlign: 'center', textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
                      Our innovative solution leverages machine learning and a Large Language Model to provide on-demand
                     responses to queries about CIT operations, enrollment, accounts, and more, available anytime and anywhere.
                 </Typography>

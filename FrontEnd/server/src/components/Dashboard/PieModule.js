@@ -26,7 +26,7 @@ export default function PieModule({ answers = 0, questions = 0, errors = 0, widt
 
     return (
         <>
-            <PieChart
+            <PieChart sx={{filter: "drop-shadow(2px 2px 2px rgba(255,255,255,0.5))"}}
                 series={[{
                     data: [
                         { id: 0, value: answers, label: 'Total Answers', color: 'green', labelStyle: { fill: '#f0f0f0' } }, 

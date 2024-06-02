@@ -125,11 +125,11 @@ const DashboardPage = () => {
     return (
         <FullScreenWrapper>
           <StyledBox>
-            <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'white'}}>
+            <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', textShadow: '2px 2px 4px rgba(0,0,0,0.6)'}}>
                 {GetGreeting()}, {firstName} {lastName}
             </Typography>
             <PieModule answers={items.length} questions={questions.length} errors={logs.errors} />
-             <SystemStatusTypography color={messageInfo.color}>
+             <SystemStatusTypography color={messageInfo.color} sx={{textShadow: '2px 2px 4px rgba(0,0,0,0.6)'}}>
                 {messageInfo.message}
             </SystemStatusTypography>
           </StyledBox>
