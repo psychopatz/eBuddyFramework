@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 load_dotenv()
 username = os.getenv("dbUsername") #"ebuddy_admin"
 password = os.getenv("dbPassword") #"OneTeamOneGoal"
-print(f"Username: {username}, Password: {password}")
+print(f"Database Username: {username}, Password: {password}")
 
 URL_DATABASE = f"mysql+pymysql://{username}:{password}@localhost:3306/ebuddyapp" #For Production
 

@@ -16,9 +16,8 @@ import models
 from models import Admin, Dataset, Question, Prompt, Photo
 
 load_dotenv()
-# BackendCurrentURL = os.getenv("BackendCurrentURL") #"http://192.168.97.155:8000"
-privateGPTBackendURL = os.getenv("privateGPTBackendURL") #"http://192.168.97.155:8001"
-# print(f"Backend URL: {BackendCurrentURL}. LLM Url; {privateGPTBackendURL}")
+
+privateGPTBackendURL = os.getenv("privateGPTBackendURL") 
 print(f"LLM Url; {privateGPTBackendURL}")
 
 pwd_context = CryptContext(schemes=["bcrypt"], bcrypt__rounds=12)
@@ -45,11 +44,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-@app.middleware("http")
-async def add_security_headers(request, call_next):
-    response = await call_next(request)
-    response.headers['Content-Security-Policy'] = "default-src https: http:; script-src https: http: 'unsafe-inline' 'unsafe-eval';"
-    return response
 
 
 #PrivateGPT URL, the ingestion service is usually hidden  basin mahack so ari ra i expose
