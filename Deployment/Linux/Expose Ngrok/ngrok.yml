@@ -1,0 +1,11 @@
+version: 1
+authtoken: 1dQsj5nqbNiRQL1u1VYTJnoAyjt_4EuWgGtWAFyzVXVXgzqyg
+tunnels:
+
+  ollama:
+    proto: http
+    addr: 11434
+  database:
+    proto: http
+    addr: 8000
+
