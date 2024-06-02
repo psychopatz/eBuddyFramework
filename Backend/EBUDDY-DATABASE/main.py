@@ -547,7 +547,8 @@ async def update_ingest_dataset(id: int, dataset_data: DatasetUpdate, background
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found")
 
     # Prepare text for ingestion
-    ingestedText = f"{db_dataset.Question.replace('\n\n', ' ')} \n {db_dataset.Answer.replace('\n\n', ' ')} \n {db_dataset.Context.replace('\n\n', ' ')}"
+    #ingestedText = f"{db_dataset.Question.replace('\n\n', ' ')} \n {db_dataset.Answer.replace('\n\n', ' ')} \n {db_dataset.Context.replace('\n\n', ' ')}"
+    ingestedText = f"Question: \n{db_dataset.Question}\nAnswer: \n {db_dataset.Answer}\nContext: \n this document is about {db_dataset.name} its about {db_dataset.Context}"
     
     # Update ingestion in background
     print("Sent to the ingestion queue")
