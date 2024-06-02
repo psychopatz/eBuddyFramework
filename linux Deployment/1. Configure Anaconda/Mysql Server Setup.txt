@@ -1,0 +1,21 @@
+#Create Database
+CREATE DATABASE ebuddyapp;
+
+#expose to all
+CREATE USER 'ebuddy_admin'@'%' IDENTIFIED BY 'OneTeamOneGoal';
+GRANT ALL PRIVILEGES ON ebuddyapp.* TO 'ebuddy_admin'@'%';
+#Expose to local
+CREATE USER 'ebuddy_admin'@'localhost' IDENTIFIED BY 'OneTeamOneGoal';
+GRANT ALL PRIVILEGES ON ebuddyapp.* TO 'ebuddy_admin'@'localhost';
+
+FLUSH PRIVILEGES;
+
+
+#TO CHECK
+mysql -u root -p
+sudo systemctl status mysql
+# TO START
+sudo systemctl start mysql
+
+
+
