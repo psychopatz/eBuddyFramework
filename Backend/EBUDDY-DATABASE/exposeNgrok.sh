@@ -10,16 +10,19 @@ download_ngrok() {
 }
 
 # Check if ngrok is available
-if ! command -v ngrok &> /dev/null
-then
-    echo "ngrok could not be found"
+if [ ! -f "./ngrok" ]; then
+    echo "ngrok could not be found in the current directory"
     download_ngrok
+else
+    echo "ngrok is present."
 fi
+
 
 # Setup ngrok authtoken
 echo "Setting up ngrok authtoken..."
 ./ngrok authtoken 2golIlBy6lR4I26eAJEaVspKrLa_7F2c3LPbDtewRAKkqYkzD
 
 # Start ngrok in the background
+clear
 echo "Starting ngrok to expose port 8000..."
 ./ngrok http 8000 
