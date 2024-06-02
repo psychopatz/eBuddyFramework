@@ -4,11 +4,11 @@
 download_ngrok() {
     echo "Downloading ngrok..."
     # Download the ngrok zip file
-    wget -q https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip -O ngrok.zip
+    wget -q https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz -O ngrok.tgz
     # Unzip the ngrok executable directly to the current directory, overwriting without prompting
-    unzip -o ngrok.zip -d ./
+    unzip -o ngrok.tgz -d ./
     # Remove the downloaded zip file after extraction
-    rm ngrok.zip
+    rm ngrok.tgz
     echo "ngrok downloaded and unzipped into the current directory."
 }
 
