@@ -26,7 +26,6 @@ const PageContainer = styled(Box)({
 const LeftPanel = styled(Box)({
   flex: 1,
   marginRight: 8,
-  backgroundColor: 'red',
   overflow: 'auto',
   maxHeight: '100%',
 });

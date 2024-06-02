@@ -42,7 +42,7 @@ const theme = createTheme({
               borderColor: '#830404',  // Border color when focused
             },
             '& .MuiInputLabel-root': {
-              color: 'rgba(255, 255, 255, 0.7)', // Changes the label color
+              color: 'rgba(255, 255, 255, 0.9)', // Changes the label color
               top: '0px', // Adjust label position for alignment
               '&.Mui-focused': {
                 color: '#830404', // Keeps label color when focused

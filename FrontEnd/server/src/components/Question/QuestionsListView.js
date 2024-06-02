@@ -13,7 +13,9 @@ const ScrollableContainer = styled.div(props => ({
   maxHeight: props.height ? `${props.height}px` : '100%',
   overflow: 'auto',
   width: '100%',
-  backgroundColor: 'skyblue',
+  backgroundColor: 'rgba(20, 164, 255)',
+  borderRadius: '10px', 
+  
 }));
 
 const ListItem = styled(MuiListItem)(({ theme, selected }) => ({
@@ -53,8 +55,8 @@ function QuestionsListView({ listHeight }) {
 
 
   return (
-    <ScrollableContainer height={listHeight}  >
-      <Box sx={{ marginTop: '10px' }}>
+    <ScrollableContainer height={listHeight} sx={{ backgroundColor: 'transparent' }}  >
+      <Box sx={{ marginTop: '10px',backgroundColor: 'transparent' }}>
       <FormControl fullWidth>
         <InputLabel id="filter-label"  >Filter Questions</InputLabel>
         <Select
