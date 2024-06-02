@@ -5,7 +5,7 @@ tunnels:
   ollama:
     proto: http
     addr: 11434
-  database:
-    proto: http
-    addr: 8000
+  # database:
+  #   proto: http
+  #   addr: 8000
 
