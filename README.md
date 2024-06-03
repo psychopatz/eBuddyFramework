@@ -27,21 +27,21 @@ Developed to address the need for efficient and effective communication within t
 - **Components**: 
     - Llama3 - for LLM 
     - MySQL - for Database
-    - qdrant - for verctor database
+    - qdrant - for vector database
     - znbang - for embedding model
     - ollama - acts as a bridge between the complexities of deploying the LLM
     - PrivateGPT - for RAG, API and LLM Inference Abstractions
     - Anaconda
     - Python
-    - Javascript
+    - JavaScript
     - HTML and CSS
     - MaterialUI
     - react-three
 - **Features**: 
-    - real-time ingestion
-    - customizable AI characteristics on the fly
-    - image display support
-    - statistics dashboard.
+    - Real-time ingestion
+    - Customizable AI characteristics on the fly
+    - Image display support
+    - Statistics dashboard.
 
 ## Getting Started
 ### Installation Instructions
@@ -49,7 +49,6 @@ Developed to address the need for efficient and effective communication within t
 #### Prerequisites:
 * Clone the repository.
 * Ensure you have Git, Python 3.11, NPM, VS Code, and MySQL installed.
-
 
 #### To install the eBuddyFramework, follow these summarized steps:
 
@@ -65,7 +64,6 @@ Developed to address the need for efficient and effective communication within t
    - Run `pip install pipx`
    - Run `pipx install poetry`
    - Run `pipx ensurepath`
-
 5. **Install PrivateGPT**: 
    - Navigate to the PrivateGPT directory.
    - Activate your conda environment.
@@ -76,24 +74,24 @@ Developed to address the need for efficient and effective communication within t
 
 ### **For Database Backend**
 1. **Create New Virtual Environment**: 
-   a. Use `conda create -n {env Name} python=3.11`
-   b. Install dependencies using pip install -r requirements.txt.
-   c. Run the application using uvicorn main:app --reload.
+   - Use `conda create -n {env Name} python=3.11`
+   - Install dependencies using `pip install -r requirements.txt`.
+   - Run the application using `uvicorn main:app --reload`.
 
 ### **For Frontend**
-    - npm install
-    - npm start
+   - `npm install`
+   - `npm start`
 
 ### Basic Usage Guide
 - Access the chat helpdesk via the institution’s kiosk or web interface.
 - Ask any questions related to CIT services and receive real-time responses.
 
 ## Contributing
-    * Patrick Oliver Bustamante [@psychopatz](https://github.com/psychopatz)
-    * Raphael M. Ubas [@RaphaelUbas](https://github.com/RaphaelUbas)
-    * Lloyd Scott Cabido [@wayddd1](https://github.com/wayddd1)
-    * Peter Macarulay [@PeteMacarulay](https://github.com/PeteMacarulay)
-    * John David Catulong [@Murphyia09](https://github.com/Murphia09)
+* Patrick Oliver Bustamante [![GitHub](https://img.shields.io/badge/GitHub-psychopatz-blue?logo=github)](https://github.com/psychopatz)
+* Raphael M. Ubas [![GitHub](https://img.shields.io/badge/GitHub-RaphaelUbas-blue?logo=github)](https://github.com/RaphaelUbas)
+* Lloyd Scott Cabido [![GitHub](https://img.shields.io/badge/GitHub-wayddd1-blue?logo=github)](https://github.com/wayddd1)
+* Peter Macarulay [![GitHub](https://img.shields.io/badge/GitHub-PeteMacarulay-blue?logo=github)](https://github.com/PeteMacarulay)
+* John David Catulong [![GitHub](https://img.shields.io/badge/GitHub-Murphyia09-blue?logo=github)](https://github.com/Murphia09)
 
 ### Guidelines
 - Fork the repository and create a new branch for your features.
