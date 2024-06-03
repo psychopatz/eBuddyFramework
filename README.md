@@ -1,58 +1,108 @@
+# [CITChat](https://ebuddy-ml.vercel.app/): AI-Machine Learning Powered Support for the CIT Community
 
-eBuddy Machine Learning Framework [Official Site](https://ebuddy-ml.vercel.app/)
+## Project Title and Description
+**CITChat** is a chat helpdesk system designed to streamline and enhance communication about CIT information services. It leverages machine learning and a Large Language Model (LLM) to provide on-demand responses to queries about CIT operations, enrollment, accounts, and more, available anytime and anywhere.
 
-# View This tutorial for backend https://www.youtube.com/watch?v=Ww2oelybDz8
-Ollama Google Colab: [Here](https://colab.research.google.com/drive/1Ez7NJSmqhXbQAL9hNvom5cVtavA_Q1gj?usp=sharing)
+## API Overview
+### High-level API Functionalities
+- **LLM Integration**: Provides intelligent responses using a large language model.
+- **Real-time Ingestion**: Continuously updates with new information.
+- **Customizable AI Personality**: Easily adjustable to match the desired characteristics and tone.
 
-Prereq:
-Git
-Python 3.11
-IDE: Vscode
-Mysql
+### Low-level API Functionalities
+- **Image Support**: Capable of displaying images in responses.
+- **Trainable AI**: Allows for easy training on new topics.
+- **Question Topic Management**: Identifies and categorizes unknown questions for admin review.
+- **Integration**: Easily integrates into institution kiosks for quick access.
 
-# PS: Gibutngan nakog asterisk ang code pra copyhon siya 1 by one
+## Motivation
+Developed to address the need for efficient and effective communication within the CIT community, CITChat focuses on:
+- **Privacy**: Ensuring sensitive information is handled securely.
+- **Accessibility**: Providing information anytime, anywhere.
 
-## 1: Download Ollama
-### Download Model
-*ollama pull llama3
-### Download Embeddings
-*ollama pull nomic-embed-text
-### run ollama
-*ollama serve
+## Architecture
+- **Technologies**: 
+    - Built with FastAPI - for backend 
+    - React.js  - for frontend 
+- **Components**: 
+    - Llama3 - for LLM 
+    - MySQL - for Database
+    - qdrant - for verctor database
+    - znbang - for embedding model
+    - ollama - acts as a bridge between the complexities of deploying the LLM
+    - PrivateGPT - for RAG, API and LLM Inference Abstractions
+    - Anaconda
+    - Python
+    - Javascript
+    - HTML and CSS
+    - MaterialUI
+    - react-three
+- **Features**: 
+    - real-time ingestion
+    - customizable AI characteristics on the fly
+    - image display support
+    - statistics dashboard.
 
-## 2: Configure Make
-### Download Make
- Link: https://gnuwin32.sourceforge.net/downlinks/make.php
-### Add the installation location to Env Path:
-Environmental Variables -> System Variable Path ->edit -> New
-And Paste the location in there; Default Path(C:\Program Files (x86)\GnuWin32\bin)
+## Getting Started
+### Installation Instructions
 
-## 3: Installing Poetry
-*pip install pipx
-### after it
-*pipx install poetry
+#### Prerequisites:
+* Clone the repository.
+* Ensure you have Git, Python 3.11, NPM, VS Code, and MySQL installed.
 
-*pipx ensurepath
 
-## 4: Create new Env
-* conda create -n {env Name} python=3.11
+#### To install the eBuddyFramework, follow these summarized steps:
 
-## 5: Install PrivateGPT
-### Cd to the privategpt directory
-### Make sure to be in your conda Env 
-### Install it by running the code
-*poetry install --extras "ui llms-ollama embeddings-ollama vector-stores-qdrant"
+### **For LLM Backend**
+1. **Download Ollama**: 
+   - Run `ollama pull llama3`
+   - Run `ollama pull nomic-embed-text`
+   - Start Ollama with `ollama serve`
+2. **Install Make**: Download from [GNUWin32](https://gnuwin32.sourceforge.net/downlinks/make.php) and add to your system PATH.
+3. **Create New Virtual Environment**: 
+   - Use `conda create -n {env Name} python=3.11`
+4. **Install Poetry**: 
+   - Run `pip install pipx`
+   - Run `pipx install poetry`
+   - Run `pipx ensurepath`
 
-## 6: Copy the settings-ollama.yaml in init/Settings Temp Folder to privategpt folder and ovewrite it
+5. **Install PrivateGPT**: 
+   - Navigate to the PrivateGPT directory.
+   - Activate your conda environment.
+   - Run `poetry install --extras "ui llms-ollama embeddings-ollama vector-stores-qdrant"`
+6. **Configure Settings**: Copy `settings-ollama.yaml` to the PrivateGPT folder.
+7. **Run PrivateGPT**: 
+   - Activate your environment and run `make run` with the appropriate profile settings.
 
-## 7: Running the privateGPT
-### Open a new anaconda POWERSHELL console and conda activate to the env
-### also make sure youre in the right path
+### **For Database Backend**
+1. **Create New Virtual Environment**: 
+   a. Use `conda create -n {env Name} python=3.11`
+   b. Install dependencies using pip install -r requirements.txt.
+   c. Run the application using uvicorn main:app --reload.
 
-### if Using PowerShell:
-*$env:PGPT_PROFILES="ollama"
-*make run
+### **For Frontend**
+    - npm install
+    - npm start
 
-### If Using just CMD:
-*set PGPT_PROFILES=ollama
-*make run
+### Basic Usage Guide
+- Access the chat helpdesk via the institution’s kiosk or web interface.
+- Ask any questions related to CIT services and receive real-time responses.
+
+## Contributing
+    * Patrick Oliver Bustamante [@psychopatz](https://github.com/psychopatz)
+    * Raphael M. Ubas [@RaphaelUbas](https://github.com/RaphaelUbas)
+    * Lloyd Scott Cabido [@wayddd1](https://github.com/wayddd1)
+    * Peter Macarulay [@PeteMacarulay](https://github.com/PeteMacarulay)
+    * John David Catulong [@Murphyia09](https://github.com/Murphia09)
+
+### Guidelines
+- Fork the repository and create a new branch for your features.
+- Submit a pull request with detailed descriptions of your changes.
+- Report issues or suggest features via the issue tracker.
+
+## License
+CITChat is licensed under the MIT License.
+
+---
+
+This template provides a clear and detailed overview of the CITChat system, highlighting its innovative features and functionalities while encouraging community engagement and contributions.
