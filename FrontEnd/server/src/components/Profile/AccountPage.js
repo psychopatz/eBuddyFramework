@@ -47,6 +47,7 @@ function AccountPage() {
     const delayedReload = DelayedReload({ delay: 3000 });
     const showToast = useToast();
     const [isLoading,setIsLoading] = useState(false)
+    const [isChanged, setIsChanged] = useState(false);
     const [profile, setProfile] = useState({
         email: '',
         firstName: '',
@@ -57,6 +58,15 @@ function AccountPage() {
     useEffect(() => {
         setProfile(adminCredentials);
     }, []);
+
+    useEffect(() => {
+        if (isChanged){
+            delayedReload.triggerReload();
+        }
+        
+    }, [adminCredentials]);
+
+
 
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
@@ -88,7 +98,8 @@ function AccountPage() {
                 showToast(error, 'error');
             }
             finally{
-                delayedReload.triggerReload();
+                setIsChanged(true);
+                
             }
         }
     };
