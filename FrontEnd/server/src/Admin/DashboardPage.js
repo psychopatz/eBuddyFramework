@@ -113,7 +113,7 @@ const DashboardPage = () => {
         setMessageInfo({ message: "Error: LLM Backend is down!", color: "red" });
       } else if (logs.errors > 0) {
         setMessageInfo({ message: `Warning: There are ${logs.errors} uningested datasets in the system. Please address them!`, color: "orange" });
-      } else if (questions.length / items.length >= 0.5) {
+      } else if (questions.length / items.length >= 0.25) {
         setMessageInfo({ message: `Warning: High volume of unresolved questions (${questions.length} questions, answer them now!)!`, color: "yellow" });
       } else if (questions.length === 0) {
         setMessageInfo({ message: "Congratulations! All questions have been resolved!", color: "green" });
