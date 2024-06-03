@@ -1,70 +1,108 @@
-# Getting Started with Create React App
+# [CITChat](https://ebuddy-ml.vercel.app/): AI-Machine Learning Powered Support for the CIT Community
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Title and Description
+**CITChat** is a chat helpdesk system designed to streamline and enhance communication about CIT information services. It leverages machine learning and a Large Language Model (LLM) to provide on-demand responses to queries about CIT operations, enrollment, accounts, and more, available anytime and anywhere.
 
-## Available Scripts
+## API Overview
+### High-level API Functionalities
+- **LLM Integration**: Provides intelligent responses using a large language model.
+- **Real-time Ingestion**: Continuously updates with new information.
+- **Customizable AI Personality**: Easily adjustable to match the desired characteristics and tone.
 
-In the project directory, you can run:
+### Low-level API Functionalities
+- **Image Support**: Capable of displaying images in responses.
+- **Trainable AI**: Allows for easy training on new topics.
+- **Question Topic Management**: Identifies and categorizes unknown questions for admin review.
+- **Integration**: Easily integrates into institution kiosks for quick access.
 
-### `npm start`
+## Motivation
+Developed to address the need for efficient and effective communication within the CIT community, CITChat focuses on:
+- **Privacy**: Ensuring sensitive information is handled securely.
+- **Accessibility**: Providing information anytime, anywhere.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Architecture
+- **Technologies**: 
+    - Built with FastAPI - for backend 
+    - React.js  - for frontend 
+- **Components**: 
+    - Llama3 - for LLM 
+    - MySQL - for Database
+    - qdrant - for verctor database
+    - znbang - for embedding model
+    - ollama - acts as a bridge between the complexities of deploying the LLM
+    - PrivateGPT - for RAG, API and LLM Inference Abstractions
+    - Anaconda
+    - Python
+    - Javascript
+    - HTML and CSS
+    - MaterialUI
+    - react-three
+- **Features**: 
+    - real-time ingestion
+    - customizable AI characteristics on the fly
+    - image display support
+    - statistics dashboard.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Getting Started
+### Installation Instructions
 
-### `npm test`
+#### Prerequisites:
+* Clone the repository.
+* Ensure you have Git, Python 3.11, NPM, VS Code, and MySQL installed.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+#### To install the eBuddyFramework, follow these summarized steps:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### **For LLM Backend**
+1. **Download Ollama**: 
+   - Run `ollama pull llama3`
+   - Run `ollama pull nomic-embed-text`
+   - Start Ollama with `ollama serve`
+2. **Install Make**: Download from [GNUWin32](https://gnuwin32.sourceforge.net/downlinks/make.php) and add to your system PATH.
+3. **Create New Virtual Environment**: 
+   - Use `conda create -n {env Name} python=3.11`
+4. **Install Poetry**: 
+   - Run `pip install pipx`
+   - Run `pipx install poetry`
+   - Run `pipx ensurepath`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. **Install PrivateGPT**: 
+   - Navigate to the PrivateGPT directory.
+   - Activate your conda environment.
+   - Run `poetry install --extras "ui llms-ollama embeddings-ollama vector-stores-qdrant"`
+6. **Configure Settings**: Copy `settings-ollama.yaml` to the PrivateGPT folder.
+7. **Run PrivateGPT**: 
+   - Activate your environment and run `make run` with the appropriate profile settings.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### **For Database Backend**
+1. **Create New Virtual Environment**: 
+   a. Use `conda create -n {env Name} python=3.11`
+   b. Install dependencies using pip install -r requirements.txt.
+   c. Run the application using uvicorn main:app --reload.
 
-### `npm run eject`
+### **For Frontend**
+    - npm install
+    - npm start
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Basic Usage Guide
+- Access the chat helpdesk via the institution’s kiosk or web interface.
+- Ask any questions related to CIT services and receive real-time responses.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Contributing
+    * Patrick Oliver Bustamante [@psychopatz](https://github.com/psychopatz)
+    * Raphael M. Ubas [@RaphaelUbas](https://github.com/RaphaelUbas)
+    * Lloyd Scott Cabido [@wayddd1](https://github.com/wayddd1)
+    * Peter Macarulay [@PeteMacarulay](https://github.com/PeteMacarulay)
+    * John David Catulong [@Murphyia09](https://github.com/Murphia09)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Guidelines
+- Fork the repository and create a new branch for your features.
+- Submit a pull request with detailed descriptions of your changes.
+- Report issues or suggest features via the issue tracker.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## License
+CITChat is licensed under the MIT License. See the LICENSE file for more details.
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This template provides a clear and detailed overview of the CITChat system, highlighting its innovative features and functionalities while encouraging community engagement and contributions.
