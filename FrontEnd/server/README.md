@@ -101,7 +101,7 @@ Developed to address the need for efficient and effective communication within t
 - Report issues or suggest features via the issue tracker.
 
 ## License
-CITChat is licensed under the MIT License. See the LICENSE file for more details.
+CITChat is licensed under the MIT License.
 
 ---
 
