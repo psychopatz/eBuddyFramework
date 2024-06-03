@@ -101,6 +101,3 @@ Developed to address the need for efficient and effective communication within t
 ## License
 CITChat is licensed under the MIT License.
 
----
-
-This template provides a clear and detailed overview of the CITChat system, highlighting its innovative features and functionalities while encouraging community engagement and contributions.
