@@ -1,6 +1,6 @@
 import { Box, Container, Typography, Link } from "@mui/material";
-import InputField from "../components/InputField";
-import BtnCustom from "../components/BtnCustom";
+import InputField from "../components/component/InputField";
+import BtnCustom from "../components/component/BtnCustom";
 import useLocalStorage from "../API/useLocalStorage";
 import { useEffect, useState } from "react";
 import { ApiAdmin } from "../API/ApiAdmin";

@@ -9,8 +9,8 @@ import { PromptContext } from './PromptContext';
 
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
-import BtnCustom from '../BtnCustom';
 import { setItem } from '../../API/useLocalStorage';
+import BtnCustom from '../component/BtnCustom';
 
 const ScrollableContainer = styled.div(props => ({
   maxHeight: props.height ? `${props.height}px` : '100%',

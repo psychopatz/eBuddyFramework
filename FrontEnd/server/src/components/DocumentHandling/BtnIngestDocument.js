@@ -2,8 +2,8 @@ import React, { useRef } from 'react';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Paper from '@mui/material/Paper';
-import useIngestDocument from '../API/useIngestDocument';
-import LoadingAnimation from '../Tools/LoadingAnimation';
+import useIngestDocument from '../../API/useIngestDocument';
+import LoadingAnimation from '../../Tools/LoadingAnimation';
 
 const BtnIngestDocument = ({ onUploadComplete, onError }) => {
   const { uploadDocument, isLoading, error, data } = useIngestDocument();

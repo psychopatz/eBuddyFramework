@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import ChatBubble from './ChatBubble';
-import InputBox from '../InputBox';
 import useChatCompletion from '../../API/useChatCompletion';
 import { Box, Button, Typography } from '@mui/material';
 import { useChat } from './ChatContext';
@@ -8,6 +7,7 @@ import ToggleableBox from '../Notification/ToggleableBox';
 import theme from '../../theme';
 import Carousel from '../Notification/Carousel';
 import { ApiPrompt } from '../../API/ApiPrompt';
+import InputBox from '../component/InputBox';
 
 
 const ChatModule = () => {

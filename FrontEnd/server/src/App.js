@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme'; 
-import ProtectedRoute from './components/ProtectedRoute';
 import Login from './Admin/Login';
 import Logout from './Admin/Logout';
 import Register from './Admin/Register';
@@ -18,6 +17,7 @@ import LandingPage from './User/LandingPage';
 import DocumentEditor from './Admin/DocumentEditor';
 import ToastProvider from './components/Notification/Toast';
 import ManagePromptsPage from './Admin/ManagePromptsPage';
+import ProtectedRoute from './Tools/ProtectedRoute';
 
 
 // Navigation component that includes NavBar based on current path

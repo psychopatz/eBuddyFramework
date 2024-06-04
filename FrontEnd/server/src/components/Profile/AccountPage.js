@@ -6,11 +6,11 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { uploadFile } from '../../API/ApiUpload';
 import { ApiAdmin } from '../../API/ApiAdmin';
 import ChangePasswordDialog from './ChangePasswordDialog';
-import BtnCustom from '../BtnCustom';
 import DelayedReload from '../../Tools/DelayedReload';
 import { useToast } from '../Notification/Toast';
 import { Canvas } from '@react-three/fiber';
 import Pseudo3dImage from '../Image/Pseudo3dImage';
+import BtnCustom from '../component/BtnCustom';
 
 const ProfilePicture = styled(Avatar)(({ theme }) => ({
     width: theme.spacing(25),

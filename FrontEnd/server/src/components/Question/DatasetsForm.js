@@ -3,10 +3,10 @@ import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import BtnCustom from '../BtnCustom';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { ApiIngest } from '../../API/ApiIngest';
 import DelayedReload from '../../Tools/DelayedReload';
+import BtnCustom from '../component/BtnCustom';
 
 const StyledForm = styled(Box)(({ theme }) => ({
   maxWidth: "100%",

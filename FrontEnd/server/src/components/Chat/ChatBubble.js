@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Paper, styled } from '@mui/material';
-import FormatText from '../FormatText';
+import FormatText from '../../Tools/FormatText';
 import useTypingEffect from '../../Tools/useTypingEffect';
 import LoadingAnimation from '../../Tools/LoadingAnimation';
 import Modal from '../Image/Modal';

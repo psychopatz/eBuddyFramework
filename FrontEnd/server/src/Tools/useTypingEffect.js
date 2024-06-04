@@ -3,9 +3,23 @@ import { useState, useEffect } from 'react';
 const useTypingEffect = (text, speed = 100, mode = 'words') => {
     const [displayedText, setDisplayedText] = useState('');
     const [index, setIndex] = useState(0);
+    const [blink, setBlink] = useState(true);
+    const [isTypingComplete, setIsTypingComplete] = useState(false);
+    const [blinkCount, setBlinkCount] = useState(0);
 
     useEffect(() => {
-        // Split text according to the selected mode, preserving whitespace for 'words' mode
+        let cursorBlinkInterval;
+        if (isTypingComplete && blinkCount < 6) {
+            cursorBlinkInterval = setInterval(() => {
+                setBlink(prev => !prev);
+                setBlinkCount(prevCount => prevCount + 1);
+            }, 500);
+        }
+
+        return () => clearInterval(cursorBlinkInterval);
+    }, [isTypingComplete, blinkCount]);
+
+    useEffect(() => {
         const tokens = mode === 'words' ? text.match(/\S+\s*/g) : text.split("");
         if (index < tokens.length) {
             const timeoutId = setTimeout(() => {
@@ -13,10 +27,12 @@ const useTypingEffect = (text, speed = 100, mode = 'words') => {
                 setIndex(prevIndex => prevIndex + 1);
             }, speed);
             return () => clearTimeout(timeoutId);
+        } else {
+            setIsTypingComplete(true);
         }
     }, [text, speed, mode, index, displayedText]);
 
-    return displayedText;
+    return `${displayedText}${blink && blinkCount < 6 ? '✏️' : ' '}`;
 };
 
 export default useTypingEffect;

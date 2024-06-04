@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, status, BackgroundTasks,  File, UploadFile 
+from fastapi import FastAPI, HTTPException, Depends, status, BackgroundTasks,  File, UploadFile, Response 
 from starlette.responses import HTMLResponse, FileResponse 
 import os
 import uuid
@@ -43,6 +43,13 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers['Content-Security-Policy'] = "default-src https: http:; script-src https: http: 'unsafe-inline' 'unsafe-eval';"
+    return response
+
 
 
 

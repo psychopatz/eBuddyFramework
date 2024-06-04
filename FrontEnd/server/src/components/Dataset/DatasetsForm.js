@@ -3,12 +3,12 @@ import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import BtnCustom from '../BtnCustom';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import {DatasetContext} from './DatasetContext';
 import ManageCurrentImages from '../Image/ManageImages';
 import { findImageUrls } from '../Image/findImageUrls';
 import { uploadFile } from '../../API/ApiUpload';
+import BtnCustom from '../component/BtnCustom';
 
 const StyledForm = styled(Box)(({ theme }) => ({
   maxWidth: "100%",

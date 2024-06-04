@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { deleteIngestedDocument } from '../API/useDeleteIngested';
+import { deleteIngestedDocument } from '../../API/useDeleteIngested';
 
 const DocumentList = ({ documents }) => {
   const [status, setStatus] = useState('');

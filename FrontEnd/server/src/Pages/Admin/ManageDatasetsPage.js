@@ -1,14 +1,11 @@
-import styled from "@emotion/styled";
-import { PromptContext, PromptProvider } from "../components/Prompt/PromptContext";
-import PromptListView from "../components/Prompt/PromptListView";
-import { Box } from "@mui/material";
-import BtnCustom from "../components/BtnCustom";
-import PromptsForm from "../components/Prompt/PromptsForm";
-import Pseudo3dImage from "../components/Image/Pseudo3dImage";
-import { Canvas } from "@react-three/fiber";
-
-
-
+import React from 'react';
+import { Box, styled } from '@mui/material';
+import DatasetsForm from "../components/Dataset/DatasetsForm";
+import DatasetsListView from "../components/Dataset/DatasetsListView";
+import {DatasetProvider} from "../components/Dataset/DatasetContext";
+import { Canvas } from '@react-three/fiber';
+import Pseudo3dImage from '../components/Image/Pseudo3dImage';
+import BtnCustom from '../components/component/BtnCustom';
 
 const FormHeader = styled(Box)({
   display: 'flex',
@@ -38,11 +35,11 @@ const RightPanel = styled(Box)({
   overflow: 'auto',
   maxHeight: '100%',
 });
-const ManagePromptsPage = () => {
-    return ( 
-        <>
-        <PromptProvider>
-        <Canvas style={{
+
+const ManageDatasetsPage = () => {
+  return (
+    <DatasetProvider>
+      <Canvas style={{
                 position: 'fixed', // Fixed position
                 top: 0, // Align to the top of the viewport
                 left: 0, // Align to the left of the viewport
@@ -52,19 +49,18 @@ const ManagePromptsPage = () => {
                 filter: 'blur(12px)'
             }}>
                 <Pseudo3dImage imageUrl="/citLogo.jpg" depthMapUrl="/citLogo_depth.jpg" imgScale={0.5} />
-            </Canvas>
+            </Canvas> 
       <PageContainer>
         <LeftPanel>
           <BtnCustom variant="contained" color="primary" onClick={() => window.location.reload()}>Create New Dataset</BtnCustom>
-          <PromptListView/>
+          <DatasetsListView />
         </LeftPanel>
         <RightPanel>
-          <PromptsForm/>
+          <DatasetsForm />
         </RightPanel>
       </PageContainer>
-    </PromptProvider>
-        </>
-     );
-}
- 
-export default ManagePromptsPage;
+    </DatasetProvider>
+  );
+};
+
+export default ManageDatasetsPage;

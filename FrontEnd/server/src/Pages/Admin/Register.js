@@ -1,6 +1,4 @@
 import { Box, Container, Typography, Alert } from "@mui/material";
-import InputField from "../components/InputField";
-import BtnCustom from "../components/BtnCustom";
 import { ApiAdmin } from "../API/ApiAdmin";
 import { useNavigate } from "react-router-dom";
 import useLocalStorage from "../API/useLocalStorage";
@@ -8,6 +6,8 @@ import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { Canvas } from '@react-three/fiber';
 import Pseudo3dImage from "../components/Image/Pseudo3dImage";
+import InputField from "../components/component/InputField";
+import BtnCustom from "../components/component/BtnCustom";
 
 
 const FullScreenWrapper = styled('div')({
