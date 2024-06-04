@@ -1,11 +1,11 @@
 import { Box } from "@mui/material";
-import ChatModule from "../components/Chat/ChatModule";
-import { ChatProvider } from "../components/Chat/ChatContext";
-import HistoryDrawer from "../components/Chat/HistoryDrawer";
+import ChatModule from "../../components/Chat/ChatModule";
+import { ChatProvider } from "../../components/Chat/ChatContext";
+import HistoryDrawer from "../../components/Chat/HistoryDrawer";
 import Banner from "./Banner";
 import Footer from "./Footer";
 import { Canvas } from "@react-three/fiber";
-import Pseudo3dImage from "../components/Image/Pseudo3dImage";
+import Pseudo3dImage from "../../components/Image/Pseudo3dImage";
 
 const ChatPage = () => {
     return ( 

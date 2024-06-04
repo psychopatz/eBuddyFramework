@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
-import { PromptContext, PromptProvider } from "../components/Prompt/PromptContext";
-import PromptListView from "../components/Prompt/PromptListView";
+import { PromptContext, PromptProvider } from "../../components/Prompt/PromptContext";
+import PromptListView from "../../components/Prompt/PromptListView";
 import { Box } from "@mui/material";
-import PromptsForm from "../components/Prompt/PromptsForm";
-import Pseudo3dImage from "../components/Image/Pseudo3dImage";
+import PromptsForm from "../../components/Prompt/PromptsForm";
+import Pseudo3dImage from "../../components/Image/Pseudo3dImage";
 import { Canvas } from "@react-three/fiber";
-import BtnCustom from "../components/component/BtnCustom";
+import BtnCustom from "../../components/component/BtnCustom";
 
 
 

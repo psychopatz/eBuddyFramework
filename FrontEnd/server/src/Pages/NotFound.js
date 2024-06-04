@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
-import Pseudo3dImage from './components/Image/Pseudo3dImage';
+import Pseudo3dImage from '../components/Image/Pseudo3dImage';
 
 const NotFound = () => {
     const navigate = useNavigate();

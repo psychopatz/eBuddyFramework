@@ -1,11 +1,11 @@
 import React from 'react';
 import { Box, styled } from '@mui/material';
-import DatasetsForm from "../components/Dataset/DatasetsForm";
-import DatasetsListView from "../components/Dataset/DatasetsListView";
-import {DatasetProvider} from "../components/Dataset/DatasetContext";
+import DatasetsForm from "../../components/Dataset/DatasetsForm";
+import DatasetsListView from "../../components/Dataset/DatasetsListView";
+import {DatasetProvider} from "../../components/Dataset/DatasetContext";
 import { Canvas } from '@react-three/fiber';
-import Pseudo3dImage from '../components/Image/Pseudo3dImage';
-import BtnCustom from '../components/component/BtnCustom';
+import Pseudo3dImage from '../../components/Image/Pseudo3dImage';
+import BtnCustom from '../../components/component/BtnCustom';
 
 const FormHeader = styled(Box)({
   display: 'flex',

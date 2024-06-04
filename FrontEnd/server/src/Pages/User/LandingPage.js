@@ -1,9 +1,9 @@
-import Pseudo3dImage from "../components/Image/Pseudo3dImage";
+import Pseudo3dImage from "../../components/Image/Pseudo3dImage";
 import { styled } from '@mui/material/styles';
 import { Canvas } from '@react-three/fiber';
 import { Box, Typography } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import BtnCustom from "../components/component/BtnCustom";
+import BtnCustom from "../../components/component/BtnCustom";
 
 const FullScreenWrapper = styled('div')({
   position: 'fixed',

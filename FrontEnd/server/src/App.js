@@ -2,22 +2,21 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import theme from './theme'; 
-import Login from './Admin/Login';
-import Logout from './Admin/Logout';
-import Register from './Admin/Register';
-import DashboardPage from './Admin/DashboardPage';
-import ViewQuestionsPage from './Admin/ViewQuestionsPage';
-import ManageDatasetsPage from './Admin/ManageDatasetsPage';
-import AdminChatPage from './Admin/AdminChatPage';
-import ChatPage from './User/ChatPage';
-import NotFound from './NotFound';
+import LandingPage from './Pages/User/LandingPage';
+import Login from './Pages/Admin/Login';
+import Logout from './Pages/Admin/Logout';
+import Register from './Pages/Admin/Register';
+import DashboardPage from './Pages/Admin/DashboardPage';
+import ViewQuestionsPage from './Pages/Admin/ViewQuestionsPage';
+import ManageDatasetsPage from './Pages/Admin/ManageDatasetsPage';
+import AdminChatPage from './Pages/Admin/AdminChatPage';
+import NotFound from './Pages/NotFound';
 import NavBar from './components/Navbar/Navbar';
 import AccountPage from './components/Profile/AccountPage';
-import LandingPage from './User/LandingPage';
-import DocumentEditor from './Admin/DocumentEditor';
-import ToastProvider from './components/Notification/Toast';
-import ManagePromptsPage from './Admin/ManagePromptsPage';
 import ProtectedRoute from './Tools/ProtectedRoute';
+import ToastProvider from './components/Notification/Toast';
+import ManagePromptsPage from './Pages/Admin/ManagePromptsPage';
+
 
 
 // Navigation component that includes NavBar based on current path
@@ -38,7 +37,7 @@ function App() {
       <main style={{ position: 'relative', flex: 1 , overflow: 'hidden'}}>
         <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat" element={<AdminChatPage />} />
         <Route path="/login" element={<Login />} />
         <Route path='/logout' element={<Logout />} />
         <Route path='/register' element={<Register />} />
@@ -48,7 +47,7 @@ function App() {
         <Route path="/admin/train-ai" element={<ProtectedRoute><ManageDatasetsPage /></ProtectedRoute>} />
         <Route path="/admin/test-chatbot" element={<ProtectedRoute><AdminChatPage /></ProtectedRoute>} />
         <Route path='/admin/account' element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
-        <Route path='/docs' element={<DocumentEditor />} />
+        {/* <Route path='/docs' element={<DocumentEditor />} /> */}
         <Route path="*" element={<NotFound />} />
       </Routes>
 

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, styled } from '@mui/material';
-import { QuestionProvider } from '../components/Question/QuestionContext';
-import QuestionsListView from '../components/Question/QuestionsListView';
-import QuestionsForm from '../components/Question/QuestionsForm';
+import { QuestionProvider } from '../../components/Question/QuestionContext';
+import QuestionsListView from '../../components/Question/QuestionsListView';
+import QuestionsForm from '../../components/Question/QuestionsForm';
 import { Canvas } from '@react-three/fiber';
-import Pseudo3dImage from '../components/Image/Pseudo3dImage';
+import Pseudo3dImage from '../../components/Image/Pseudo3dImage';
 
 
 const FormHeader = styled(Box)({

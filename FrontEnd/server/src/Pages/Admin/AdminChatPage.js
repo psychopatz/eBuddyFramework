@@ -1,11 +1,11 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import ChatModule from '../components/Chat/ChatModule';
-import { ChatProvider } from '../components/Chat/ChatContext';
-import HistoryDrawer from '../components/Chat/HistoryDrawer';
-import ToggleableBox from '../components/Notification/ToggleableBox';
 import { Canvas } from '@react-three/fiber';
-import Pseudo3dImage from '../components/Image/Pseudo3dImage';
+import ChatModule from '../../components/Chat/ChatModule';
+import { ChatProvider } from '../../components/Chat/ChatContext';
+import HistoryDrawer from '../../components/Chat/HistoryDrawer';
+
+import Pseudo3dImage from '../../components/Image/Pseudo3dImage';
 
 const AdminChatPage = () => {
     return (

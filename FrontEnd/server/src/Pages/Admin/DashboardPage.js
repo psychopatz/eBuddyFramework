@@ -1,15 +1,15 @@
 import { Box, Typography } from "@mui/material";
-import useLocalStorage from "../API/useLocalStorage.js";
-import GetGreeting from "../Tools/GetGreeting.js";
-import PieModule from "../components/Dashboard/PieModule.js";
+import useLocalStorage from "../../API/useLocalStorage.js";
+import GetGreeting from "../../Tools/GetGreeting.js";
+import PieModule from "../../components/Dashboard/PieModule.js";
 import { useEffect, useState } from "react";
-import { ApiDataset } from "../API/ApiDataset.js";
-import { ApiIngest } from "../API/ApiIngest.js";
-import { ApiQuestion } from "../API/ApiQuestion.js";
+import { ApiDataset } from "../../API/ApiDataset.js";
+import { ApiIngest } from "../../API/ApiIngest.js";
+import { ApiQuestion } from "../../API/ApiQuestion.js";
 import styled from "@emotion/styled";
 import { Canvas } from "@react-three/fiber";
-import Pseudo3dImage from "../components/Image/Pseudo3dImage.js";
-import { useToast } from "../components/Notification/Toast.js";
+import Pseudo3dImage from "../../components/Image/Pseudo3dImage.js";
+import { useToast } from "../../components/Notification/Toast.js";
 
 const FullScreenWrapper = styled('div')({
   position: 'fixed',
