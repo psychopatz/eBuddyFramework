@@ -226,6 +226,18 @@ async def delete_dataset(id: int, db:db_dependency):
         raise HTTPException(status_code=404, detail="Dataset not found")
     db.delete(db_dataset)
     db.commit()
+    
+
+@app.post("/datasets/bulk", response_model=List[int], status_code=status.HTTP_201_CREATED)
+def create_datasets(datasets: List[DatasetCreate], db: Session = Depends(get_db)):
+    ids = []
+    for dataset in datasets:
+        db_dataset = Dataset(**dataset.dict())
+        db.add(db_dataset)
+        db.commit()
+        db.refresh(db_dataset)
+        ids.append(db_dataset.id)
+    return ids
 #Dataset Functionalities API
 # TODO Gitapulan pako since inamaw ang akong verification process, ig capstone na nako i add lols 
 
