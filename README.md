@@ -16,6 +16,10 @@
 - **Integration**: Easily integrates into institution kiosks for quick access.
 
 ## Motivation
+
+We aim to streamline the school's information helpdesk by building a framework for building an automated digital helpdesk assistant 
+which is a valuable tool for freshmen, transferees, parents, students, and other people alike. Which can be access anythime, anywhere.
+
 Developed to address the need for efficient and effective communication within the CIT community, CITChat focuses on:
 - **Privacy**: Ensuring sensitive information is handled securely.
 - **Accessibility**: Providing information anytime, anywhere.
@@ -25,10 +29,10 @@ Developed to address the need for efficient and effective communication within t
     - Built with FastAPI - for backend 
     - React.js  - for frontend 
 - **Components**: 
-    - Llama3 - for LLM 
+    - Llama3.1 - for LLM 
     - MySQL - for Database
     - qdrant - for vector database
-    - znbang - for embedding model
+    - nomic - for embedding model
     - ollama - acts as a bridge between the complexities of deploying the LLM
     - PrivateGPT - for RAG, API and LLM Inference Abstractions
     - Anaconda
@@ -42,6 +46,8 @@ Developed to address the need for efficient and effective communication within t
     - Customizable AI characteristics on the fly
     - Image display support
     - Statistics dashboard.
+    - Advance Logging
+    - Natural Language Support
 
 ## Getting Started
 ### Installation Instructions
@@ -54,7 +60,7 @@ Developed to address the need for efficient and effective communication within t
 
 ### **For LLM Backend**
 1. **Download Ollama**: 
-   - Run `ollama pull llama3`
+   - Run `ollama pull llama3.1`
    - Run `ollama pull nomic-embed-text`
    - Start Ollama with `ollama serve`
 2. **Install Make**: Download from [GNUWin32](https://gnuwin32.sourceforge.net/downlinks/make.php) and add to your system PATH.
