@@ -84,7 +84,7 @@ export const DatasetProvider = ({ children }) => {
         showToast('Error Creating Dataset, Try Again later!', 'error');
         setIsCreating(false);
       }).finally(() => {
-        delayedReload.triggerReload();
+        // delayedReload.triggerReload();
       })
       ;
   };

@@ -1,2 +1,2 @@
-cd database
-uvicorn main:backend --reload
+cd EBUDDY-DATABASE
+fastapi run main.py

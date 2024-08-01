@@ -44,6 +44,13 @@ const StyledStack = styled(Stack)(({ theme }) => ({
 }));
 
 const InputBox = ({ value, placeholder, onSend, onChange, isDisabled }) => {
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            onSend();
+        }
+    };
+
     return (
         <StyledStack direction="row" spacing={2} alignItems="center">
             <StyledTextarea
@@ -51,6 +58,7 @@ const InputBox = ({ value, placeholder, onSend, onChange, isDisabled }) => {
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
+                onKeyDown={handleKeyDown}
                 style={{ flexGrow: 1, minHeight: '50px' }} 
             />
             <Button 

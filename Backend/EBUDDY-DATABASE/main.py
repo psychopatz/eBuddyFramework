@@ -512,36 +512,36 @@ async def list_ingested():
         # Handle errors appropriately
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.delete("/llm/ingest/bulkDelete", status_code=status.HTTP_200_OK)
-async def delete_all_llm_datasets(db: Session = Depends(get_db)):
-    datasets = db.query(Dataset).all()
-    if not datasets:
-        return {"message": "No ingested datasets found"}
-    for db_dataset in datasets:
-        ingest_id = db_dataset.IngestId
-        if ingest_id is None:
-            continue
-        print(f"Deleting ingestion: {ingest_id}")
-        try:
-            client.ingestion.delete_ingested(ingest_id)
-        except Exception as e:
-            print(f"Error deleting ingestion {ingest_id}: {e}")
-        db.delete(db_dataset)
-    db.commit()
-    return {"message": "All ingested datasets deleted successfully"}
+# @app.delete("/llm/ingest/bulkDelete", status_code=status.HTTP_200_OK)
+# async def delete_all_llm_datasets(db: Session = Depends(get_db)):
+#     datasets = db.query(Dataset).all()
+#     if not datasets:
+#         return {"message": "No ingested datasets found"}
+#     for db_dataset in datasets:
+#         ingest_id = db_dataset.IngestId
+#         if ingest_id is None:
+#             continue
+#         print(f"Deleting ingestion: {ingest_id}")
+#         try:
+#             client.ingestion.delete_ingested(ingest_id)
+#         except Exception as e:
+#             print(f"Error deleting ingestion {ingest_id}: {e}")
+#         db.delete(db_dataset)
+#     db.commit()
+#     return {"message": "All ingested datasets deleted successfully"}
 
 
 
-@app.post("/llm/ingest/bulkCreate", response_model=List[str], status_code=status.HTTP_201_CREATED)
-async def bulk_ingest_datasets(background_tasks: BackgroundTasks, datasets: List[IngestDataset], db: Session = Depends(get_db)):
-    responses = []
-    for dataset in datasets:
-        db_dataset = Dataset(**dataset.dict())
-        ingestedText = f"Question: \n{db_dataset.Question}\nAnswer: \n {db_dataset.Answer}\nContext: \n this document is about {db_dataset.name} its about {db_dataset.Context}"
+# @app.post("/llm/ingest/bulkCreate", response_model=List[str], status_code=status.HTTP_201_CREATED)
+# async def bulk_ingest_datasets(background_tasks: BackgroundTasks, datasets: List[IngestDataset], db: Session = Depends(get_db)):
+#     responses = []
+#     for dataset in datasets:
+#         db_dataset = Dataset(**dataset.dict())
+#         ingestedText = f"Question: \n{db_dataset.Question}\nAnswer: \n {db_dataset.Answer}\nContext: \n this document is about {db_dataset.name} its about {db_dataset.Context}"
         
-        background_tasks.add_task(ingest_text_in_background, db_dataset.name, ingestedText, db_dataset, db)
-        responses.append(f"Queued for ingestion: {db_dataset.name}")
-    return responses
+#         background_tasks.add_task(ingest_text_in_background, db_dataset.name, ingestedText, db_dataset, db)
+#         responses.append(f"Queued for ingestion: {db_dataset.name}")
+#     return responses
 
 
     
